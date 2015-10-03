@@ -1,0 +1,1 @@
+{'modelfile': 'housingRT_4.tree', 'classifiertype': 'RT', 'TestingErr': '20.55006545', 'testresult': 'housingRT_4.err', 'trainingdata': 'data/housing_train.txt', 'terminatingcondition': 'layer', 'terminatingthreshold': '7', 'testingdata': 'data/housing_test.txt', 'TrainingErr': '3.32818189205', 'validationmethod': 'TestingData', 'featurethreshs': 'housing_threshold'}

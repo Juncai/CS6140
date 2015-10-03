@@ -1,0 +1,1 @@
+{'modelfile': 'housingRIDGE_1.reg', 'classifiertype': 'Ridge', 'testresult': 'housingRIDGE_1.err', 'trainingdata': 'data/housing_train.txt', 'normalizemethod': 'ShiftAndScale', 'TestingErr': '23.1712231523', 'testingdata': 'data/housing_test.txt', 'TrainingErr': '23.5769608281', 'validationmethod': 'TestingData'}
