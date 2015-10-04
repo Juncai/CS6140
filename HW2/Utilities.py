@@ -18,17 +18,56 @@ def get_term_fun(config):
     '''
     if config[c.TERM_CON] == c.MSE:
         return mse_less_than
+    elif config[c.TERM_CON] == c.ACC:
+        return acc_higher_than
 
-def mse_less_than(theta, features, label, thresh):
+
+def acc_higher_than(theta, features, label, thresh):
     '''
-    Return True if the error less than the threshold, False otherwise
+    Return True if the accuracy is higher than or equal to the threshold, False otherwise
     '''
     x = [[1] + f for f in features]
     x = np.array(x)
     y = np.dot(x, theta)
     y = [yy[0] for yy in y]
     label = [l[0] for l in label]
-    return mse(y, label) < thresh
+    cur_acc = acc(y, label)
+    print cur_acc
+    return cur_acc >= thresh
+
+
+def logistic_fun_batch(theta, features):
+    '''
+    Perform logistic regression calculation
+    :param theta:
+    :param features:
+    :return:
+    '''
+    y = []
+    for x in features:
+        tmp = logistic_fun(theta, x)
+        y.append([tmp])
+    return y
+
+def logistic_fun(theta, x):
+    x = [1] + x
+    wx = np.dot(x, theta)[0]
+    return 1.0 / (1 + np.exp(-wx))
+
+
+
+def mse_less_than(theta, features, label, thresh):
+    '''
+    Return True if the error is less than the threshold, False otherwise
+    '''
+    x = [[1] + f for f in features]
+    x = np.array(x)
+    y = np.dot(x, theta)
+    y = [yy[0] for yy in y]
+    label = [l[0] for l in label]
+    cur_mse = mse(y, label)
+    # print cur_mse
+    return cur_mse < thresh
 
 def get_test_method(config):
     test_method = mse

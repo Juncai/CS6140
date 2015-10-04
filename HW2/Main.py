@@ -96,4 +96,5 @@ if __name__ == '__main__':
     # main('spam_reg.conf')
     # main('housing_ridge.conf')
     # main('spam_ridge.conf')
-    main('housing_linear_gd.conf')
+    main('config/housing_linear_gd.conf')
+    # main('config/spam_linear_gd.conf')

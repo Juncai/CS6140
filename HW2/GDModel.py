@@ -17,6 +17,7 @@ class LinearRegressionGD(rm.RegressionModel):
 
         # initialize the theta and iteration counter
         theta = np.zeros((len(x[0]), 1))
+        # theta = np.ones((len(x[0]), 1))
         self.iter_count = 0
 
         # recursively update theta
@@ -32,7 +33,7 @@ class LinearRegressionGD(rm.RegressionModel):
             else:
                 for i in range(len(theta)):
                     for j in range(len(features[0])):
-                        theta[i] = theta[i] - lamda * (np.dot(x[j], theta) - labels[j]) * x[j]
+                        theta[i][0] = theta[i][0] - lamda * (np.dot(x[j], theta) - labels[j][0]) * x[j][i]
             self.iter_count += 1
 
         self.theta = theta
@@ -49,7 +50,7 @@ class LogisticRegressionGD(rm.RegressionModel):
         # construct x with the bias column
         x = [[1] + f for f in features]
         x = np.array(x)
-        y = [[l] for l in labels]
+        y = np.array([[l] for l in labels])
 
         # initialize the theta and iteration counter
         theta = np.zeros((len(x[0]), 1))
@@ -60,33 +61,19 @@ class LogisticRegressionGD(rm.RegressionModel):
             if is_batch:
                 hx = np.array(self.logistic_fun(theta, features))
                 diffs = y - hx
-                for i in range(len(theta)):
+                for j in range(len(theta)):
                     sum = 0
-                    for j in range(len(diffs)):
-                        sum += diffs[j][0] * x[j][i]
-                    theta[i][0] = theta[i][0] + lamda * sum
+                    for i in range(len(diffs)):
+                        sum += diffs[i][0] * x[i][j]
+                    theta[j][0] = theta[j][0] + lamda * sum
             else:
-                for i in range(len(theta)):
-                    for j in range(len(features[0])):
-                        # TODO refine the update of the theta
-                        theta[i] = theta[i] - lamda * (np.dot(x[j], theta) - labels[j]) * x[j]
+                for j in range(len(theta)):
+                    for i in range(len(features[0])):
+                        theta[j][0] = theta[j][0] + lamda * (self.logistic_fun(theta, x[i]) - labels[i][0]) * x[i][j]
             self.iter_count += 1
 
         self.theta = theta
 
-    def logistic_fun(self, theta, features):
-        '''
-        Perform logistic regression calculation
-        :param theta:
-        :param features:
-        :return:
-        '''
-        y = []
-        for x in features:
-            x = [1] + x
-            tmp = np.dot(x, theta)
-            y.append([1.0 / (1 + np.exp(-tmp))])
-        return y
 
 
 class Perceptron(rm.RegressionModel):
@@ -109,6 +96,7 @@ class Perceptron(rm.RegressionModel):
         self.iter_count = 0
 
         # recursively update theta
+        # TODO refactor the term_fun, should take array 'm' and calculate the sum
         while not term_fun(theta, features, y, thresh):
             if is_batch:
                 hx = np.dot(x, theta)

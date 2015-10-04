@@ -29,5 +29,13 @@ def build_model(training_data, config):
         model = gd.LinearRegressionGD()
         model.build(training_data[0], training_data[1], lamda, term_fun, thresh, is_batch)
         return model
+    elif m_type == c.LOGISTIC_R_GD:
+        lamda = float(config[c.LAMBDA])
+        term_fun = u.get_term_fun(config)
+        thresh = float(config[c.TERM_THRESH])
+        is_batch = u.get_is_batch(config)
+        model = gd.LogisticRegressionGD()
+        model.build(training_data[0], training_data[1], lamda, term_fun, thresh, is_batch)
+        return model
 
 
