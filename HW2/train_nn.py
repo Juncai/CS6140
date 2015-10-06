@@ -20,7 +20,7 @@ nn_output = nn_input
 model = NNModel.NN()
 lamda = 0.1
 try:
-    model.build((nn_input, nn_output), lamda, util.mse_for_nn, 0.1)
+    model.build((nn_input, nn_output), lamda, util.mse_for_nn, 0.2)
 except KeyboardInterrupt:
     pass
 # calculate normalized weights
