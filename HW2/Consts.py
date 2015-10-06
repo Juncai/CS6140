@@ -6,6 +6,7 @@ REGRESSION = 'LinearRegression'
 RIDGE = 'Ridge'
 LINEAR_R_GD = 'LinearRGD'
 LOGISTIC_R_GD = 'LogisticRGD'
+PERCEPTRON = 'Perceptron'
 
 # Config section name
 SECTION = 'Classifier'

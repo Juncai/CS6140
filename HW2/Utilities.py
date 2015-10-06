@@ -5,6 +5,22 @@ import Consts as c
 HOUSING_DELI = None
 SPAM_DELI = ','
 
+def mse_for_nn(nn_outputs, exp_outputs):
+    res = np.array(nn_outputs)
+    exp = np.array(exp_outputs)
+    diff = (res - exp).tolist()
+    mse = 0
+    for r in diff:
+        for c in r:
+           mse += math.pow(c, 2)
+    # print mse
+    return mse / len(nn_outputs)
+
+def sigmoid(x):
+    return 1.0 / (1 + np.exp(-x))
+
+def mistakes_less_than(m, thresh):
+    return len(m) < thresh
 
 def get_is_batch(config):
     if config[c.UPDATE_STYLE] == c.BATCH:
@@ -14,7 +30,7 @@ def get_is_batch(config):
 
 def get_term_fun(config):
     '''
-    TODO: add other methods
+    Get termination function for the config
     '''
     if config[c.TERM_CON] == c.MSE:
         return mse_less_than
