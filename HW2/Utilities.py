@@ -5,6 +5,67 @@ import Consts as c
 HOUSING_DELI = None
 SPAM_DELI = ','
 
+
+def calculate_auc(roc):
+    auc = 0
+    for i in range(1, len(roc)):
+        auc += (roc[i][0] - roc[i-1][0]) * (roc[i][1] + roc[i-1][1])
+    return auc / 2.0
+
+def confusion_matrix_mean(cms):
+    sum = [0, 0, 0, 0]
+
+    for cm in cms:
+        for i in range(len(cm)):
+            sum[i] += cm[i]
+    mean = [s / len(cms) for s in sum]
+    return mean
+
+def compute_acc_confusion_matrix(predictions, labels, thresh=0.5):
+    '''
+
+    :param predictions:
+    :param labels:
+    :return: (acc, (TruePos, FalsePos, TrueNeg, FalseNeg))
+    '''
+    pos = 0
+    neg = 0
+    false_pos = 0
+    false_neg = 0
+    true_pos = 0
+    true_neg = 0
+
+    for i in range(len(labels)):
+        if labels[i] == 1:
+            pos += 1
+            if predictions[i] >= thresh:
+                true_pos += 1
+            else:
+                false_neg += 1
+        else:
+            neg += 1
+            if predictions[i] < thresh:
+                true_neg += 1
+            else:
+                false_pos += 1
+    acc = float(true_pos + true_neg) / len(labels)
+    cm = (float(true_pos) / pos if pos != 0 else 1,
+          float(false_pos) / neg if neg != 0 else 0,
+          float(true_neg) / neg if neg != 0 else 1,
+          float(false_neg) / pos if pos != 0 else 0)
+    return acc, cm
+
+
+def write_result_to_file(path, model_name, result):
+    # Log the result
+    f = open(path, 'w+')
+    f.write('Model: ' + model_name + '\n')
+    for k in result.keys():
+        f.write(k + ' ' + result[k] + '\n')
+    f.close()
+    return
+
+
 def mse_for_nn(nn_outputs, exp_outputs):
     res = np.array(nn_outputs)
     exp = np.array(exp_outputs)
@@ -207,31 +268,7 @@ def mse(predictions, labels):
     return res / len(labels)
 
 
-def split_on_ig(features, label, threshs, layer, term_con, term_thresh):
-    '''
-    Find the best pair based on IG
-    '''
-    best_pair = None
-    if layer > term_thresh or compute_entropy(label) == 0:
-        return (None, find_majority(label)), None, None
-    max_ig = 0
-    for i in range(len(features[0])):
-        for j in range(len(threshs[i])):
-            f_cur = [x[i] for x in features]
-            ig_i = compute_ig(f_cur, label, threshs[i][j])
-            if ig_i > max_ig:
-                max_ig = ig_i
-                best_pair = (i, threshs[i][j])
 
-    if best_pair is None:
-        return (None, find_majority(label)), None, None
-
-    left_data, right_data = get_subtree_data(features, label, best_pair[0], best_pair[1])
-
-    # in case there is not actual split happened
-    if len(left_data[0]) == 0 or len(right_data[0]) == 0:
-        best_pair = (None, find_majority(label))
-    return best_pair, left_data, right_data
 
 
 def compute_ig(feature, label, thresh):

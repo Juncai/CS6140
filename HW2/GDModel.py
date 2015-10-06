@@ -14,7 +14,7 @@ class LinearRegressionGD(rm.RegressionModel):
         # construct x with the bias column
         x = [[1] + f for f in features]
         x = np.array(x)
-        y = [[l] for l in labels]
+        y = np.array([[l] for l in labels])
 
         # initialize the theta and iteration counter
         theta = np.zeros((len(x[0]), 1))

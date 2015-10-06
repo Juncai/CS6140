@@ -1,4 +1,5 @@
 import numpy as np
+import Utilities as util
 
 
 class Tree():
@@ -35,10 +36,23 @@ class Tree():
                 c_node = c_node[1][1]
         return c_node[0]
 
-    def build(self, tar_fun, features, label, threshs, term_con, term_thresh):
-        self.tree = self.build_helper(tar_fun, features, label, threshs, 1, term_con, term_thresh)
 
-    def build_helper(self, tar_fun, features, label, threshs, layer, term_con, term_thresh):
+
+class DecisionTree(Tree):
+    acc = 0
+
+    def test(self, features, label):
+        '''
+        Take a tree model and a test dataset,
+        Return the result
+        '''
+        predict = self.batch_predict(features)
+        return util.compute_acc_confusion_matrix(predict, label)
+
+    def build(self, features, label, threshs, term_con, term_thresh):
+        self.tree = self.build_helper(features, label, threshs, 1, term_con, term_thresh)
+
+    def build_helper(self, features, label, threshs, layer, term_con, term_thresh):
         '''
         Build a DT with given dataset, criteria function and thresholds
         return a tree as a tuple
@@ -49,7 +63,7 @@ class Tree():
         #     return cri[1],
 
         # find out the best feature and threshold pair if there is any
-        best_pair, left_data, right_data = tar_fun(features, label, threshs, layer, term_con, term_thresh)
+        best_pair, left_data, right_data = self.split_on_ig(features, label, threshs, layer, term_con, term_thresh)
 
         if best_pair[0] is None:
             # return label[0],
@@ -58,6 +72,33 @@ class Tree():
 
         # if len(f_new_1) == 0 or len(f_new_2) == 0:
         #     return np.mean(label),
-        l_tree = self.build_helper(tar_fun, left_data[0], left_data[1], threshs, layer+1, term_con, term_thresh)
-        r_tree = self.build_helper(tar_fun, right_data[0], right_data[1], threshs, layer+1, term_con, term_thresh)
+        l_tree = self.build_helper(left_data[0], left_data[1], threshs, layer+1, term_con, term_thresh)
+        r_tree = self.build_helper(right_data[0], right_data[1], threshs, layer+1, term_con, term_thresh)
         return best_pair, (l_tree, r_tree)
+
+
+    def split_on_ig(self, features, label, threshs, layer, term_con, term_thresh):
+        '''
+        Find the best pair based on IG
+        '''
+        best_pair = None
+        if layer > term_thresh or util.compute_entropy(label) == 0:
+            return (None, util.find_majority(label)), None, None
+        max_ig = 0
+        for i in range(len(features[0])):
+            for j in range(len(threshs[i])):
+                f_cur = [x[i] for x in features]
+                ig_i = util.compute_ig(f_cur, label, threshs[i][j])
+                if ig_i > max_ig:
+                    max_ig = ig_i
+                    best_pair = (i, threshs[i][j])
+
+        if best_pair is None:
+            return (None, util.find_majority(label)), None, None
+
+        left_data, right_data = util.get_subtree_data(features, label, best_pair[0], best_pair[1])
+
+        # in case there is not actual split happened
+        if len(left_data[0]) == 0 or len(right_data[0]) == 0:
+            best_pair = (None, util.find_majority(label))
+        return best_pair, left_data, right_data

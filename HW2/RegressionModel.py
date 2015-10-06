@@ -1,16 +1,50 @@
 import numpy as np
+import Utilities as util
 
 
 class RegressionModel():
     theta = []
 
     def test(self, features, label, err_fun):
+        y_1_d = self.get_prediction(features)
+        return err_fun(y_1_d, label)
+
+    def calculate_roc(self, features, label):
+        y_1_d = self.get_prediction(features)
+        print y_1_d
+        d = []
+        for i in range(len(label)):
+            d.append([y_1_d[i], label[i]])
+        d.sort(key=lambda x: x[0],reverse=True)
+        d_predict = [y[0] for y in d]
+        d_label = [y[1] for y in d]
+        pos = reduce(lambda x, y: x + 1 if y == 1 else x, [0] + d_label)
+        neg = reduce(lambda x, y: x + 1 if y == 0 else x, [0] + d_label)
+        roc = []
+        for i in range(len(d)):
+            roc.append(self.false_pos_true_pos(d_predict, d_label,
+                                               pos, neg, i))
+        return roc
+
+
+    def false_pos_true_pos(self, pred, label, pos, neg, ind):
+        false_pos = 0
+        true_pos = 0
+        for i in range(ind+1):
+            if label[i] == 1:
+                true_pos += 1
+            else:
+                false_pos += 1
+        return (float(false_pos) / neg if neg > 0 else 0,
+                float(true_pos) / pos if pos > 0 else 1)
+
+
+    def get_prediction(self, features):
         x = [[1] + f for f in features]
-        # x = features
         x = np.array(x)
         y = np.dot(x, self.theta)
         y_1_d = [yy[0] for yy in y]
-        return err_fun(y_1_d, label)
+        return y_1_d
 
 
 class LinearRegression(RegressionModel):
