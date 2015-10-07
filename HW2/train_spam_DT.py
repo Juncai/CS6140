@@ -20,7 +20,8 @@ model_name = 'spam_' + str(k) + 'fold_' + term_con + '_' + str(term_thresh)
 # laod training data
 training_data = loader.load_dataset('data/spambase.data')
 # load threshold data
-threshs = loader.load_pickle_file('config/spam_threshold')
+# threshs = loader.load_pickle_file('config/spam_threshold')
+threshs = Preprocess.generate_thresholds(training_data[0], 'config/spam_thresh_path')
 
 # start training
 training_accs = []

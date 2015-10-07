@@ -11,6 +11,7 @@ def generate_thresholds(features, thresh_path):
     f = open(thresh_path, 'wb+')
     pickle.dump(threshs, f)
     f.close()
+    return threshs
 
 
 def shift_and_scale(ds, col):

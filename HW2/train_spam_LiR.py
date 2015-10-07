@@ -6,7 +6,7 @@ import RegressionModel as rm
 import Consts as c
 
 # training parameter
-k = 10  # fold
+k = 30  # fold
 result_path = 'results/spamLiR_2.acc'
 model_name = 'spam_' + str(k) + 'fold'
 # normalization = Preprocess.zero_mean_unit_var

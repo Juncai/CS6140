@@ -61,7 +61,7 @@ def write_result_to_file(path, model_name, result):
     f = open(path, 'w+')
     f.write('Model: ' + model_name + '\n')
     for k in result.keys():
-        f.write(k + ' ' + result[k] + '\n')
+        f.write(k + ' ' + str(result[k]) + '\n')
     f.close()
     return
 
@@ -110,6 +110,7 @@ def acc_higher_than(theta, features, label, thresh):
     label = [l[0] for l in label]
     cur_acc = acc(y, label)
     print cur_acc
+    print mse(y, label)
     return cur_acc >= thresh
 
 
@@ -143,7 +144,7 @@ def mse_less_than(theta, features, label, thresh):
     y = [yy[0] for yy in y]
     label = [l[0] for l in label]
     cur_mse = mse(y, label)
-    # print cur_mse
+    print cur_mse
     return cur_mse < thresh
 
 def get_test_method(config):

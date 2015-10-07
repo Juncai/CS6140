@@ -1,6 +1,7 @@
 import numpy as np
 import RegressionModel as rm
 import random
+import math
 
 
 class LinearRegressionGD(rm.RegressionModel):
@@ -18,6 +19,7 @@ class LinearRegressionGD(rm.RegressionModel):
 
         # initialize the theta and iteration counter
         theta = np.zeros((len(x[0]), 1))
+        # theta = np.array([[random.random()] for i in range(len(x[0]))])
         # theta = np.ones((len(x[0]), 1))
         self.iter_count = 0
 
@@ -32,12 +34,23 @@ class LinearRegressionGD(rm.RegressionModel):
                         sum += diffs[j][0] * x[j][i]
                     theta[i][0] = theta[i][0] - lamda * sum
             else:
-                for i in range(len(theta)):
-                    for j in range(len(features[0])):
-                        theta[i][0] = theta[i][0] - lamda * (np.dot(x[j], theta) - labels[j][0]) * x[j][i]
+                # print str(np.dot(x[0], theta)[0]) + ' ' + str(y[0][0])
+                # print str(np.dot(x[-1], theta)[0]) + ' ' + str(y[-1][0])
+                for i in range(len(x)):
+                    hx = np.dot(x[i], theta)[0]
+                    diff = hx - y[i][0]
+                    for j in range(len(theta)):
+                        # tmp = np.dot(x[i], theta)[0]
+                        # tmp2 =labels[i][0]
+                        # tmp3 = x[i][j]
+                        tmp4 = theta[j][0]
+                        # tmp5 = lamda * (np.dot(x[i], theta)[0] - y[i][0]) * x[i][j]
+                        theta[j][0] = theta[j][0] - lamda * diff * x[i][j]
+                        if math.isnan(theta[j][0]):
+                            print 'something'
             self.iter_count += 1
-
-        self.theta = theta
+            self.theta = theta
+            # print theta
 
 
 class LogisticRegressionGD(rm.RegressionModel):
