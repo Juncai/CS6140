@@ -8,11 +8,12 @@ import Consts as c
 
 # training parameter
 k = 10  # fold
-result_path = 'results/spamLiR_2.acc'
+result_path = 'results/spamLiRGD_1.acc'
 model_name = 'spam_' + str(k) + 'fold'
-lamda = 0.0000000007
-is_batch = True
-normalization = c.ZERO_MEAN_UNIT_VAR
+lamda = 0.0000002
+is_batch = False
+# normalization = Preprocess.zero_mean_unit_var
+normalization = Preprocess.shift_and_scale
 term_fun = util.acc_higher_than
 term_thresh = 0.89
 
@@ -33,7 +34,7 @@ for i in range(k):
 
 
     model = gd.LinearRegressionGD()
-    model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
+    model.build(tr_data[0], tr_data[1], lamda, term_fun, term_thresh, is_batch)
 
     training_test_res = model.test(tr_data[0], tr_data[1], util.compute_acc_confusion_matrix)
     training_accs.append(training_test_res[0])
