@@ -2,6 +2,7 @@ import numpy as np
 import RegressionModel as rm
 import random
 import Utilities as util
+import math
 
 
 class LinearRegressionGD(rm.RegressionModel):
@@ -93,4 +94,4 @@ class LogisticRegressionGD(rm.RegressionModel):
         self.theta = theta
 
 
-
+    # def update_theta(self, ):
