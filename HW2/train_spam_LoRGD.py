@@ -2,20 +2,24 @@ import DataLoader as loader
 import Preprocess
 import numpy as np
 import Utilities as util
-import RegressionModel as rm
+import GDModel as gd
 import Consts as c
 
-# training parameter
-k = 50  # fold
-result_path = 'results/spamLiR_3.acc'
-model_name = 'spam_' + str(k) + 'fold_zeroMean'
-normalization = Preprocess.zero_mean_unit_var
-# normalization = Preprocess.shift_and_scale
 
+# training parameter
+k = 10  # fold
+result_path = 'results/spamLoRGD_1.acc'
+model_name = 'spam_' + str(k) + 'fold_zeroMean'
+lamda = 0.000007
+is_batch = False
+normalization = Preprocess.zero_mean_unit_var
+term_fun = util.acc_higher_than
+term_thresh = 0.89
 
 # laod and preprocess training data
 training_data = loader.load_dataset('data/spambase.data')
 Preprocess.normalize_features_all(normalization, training_data[0])
+
 
 # start training
 training_accs = []
@@ -28,8 +32,8 @@ for i in range(k):
     (tr_data, te_data) = Preprocess.prepare_k_fold_data(training_data, k, i + 1)
 
 
-    model = rm.LinearRegression()
-    model.build(tr_data[0], tr_data[1])
+    model = gd.LogisticRegressionGD()
+    model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
 
     training_test_res = model.test(tr_data[0], tr_data[1], util.compute_acc_confusion_matrix)
     training_accs.append(training_test_res[0])

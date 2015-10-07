@@ -83,8 +83,8 @@ class Ridge(RegressionModel):
         lambda_i = lamda * np.eye(len(features[0]))
 
         x = np.array(x)
-        y = np.array(label)
-        x_t = x.transpose()
+        y = np.array([[l] for l in label])
+        x_t = np.transpose(x, (1, 0))
         x_t_x = np.dot(x_t, x)
         x_t_x_lambda_i = x_t_x + lambda_i
         x_t_x_lambda_i_inv = np.linalg.pinv(x_t_x_lambda_i)
