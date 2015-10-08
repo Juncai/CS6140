@@ -64,7 +64,7 @@ def normalize_features_all(method, train_ds, test_ds=None):
     if test_ds:
         cur_ds = train_ds + test_ds
 
-    for i in range(len(cur_ds[0]) - 1):
+    for i in range(len(cur_ds[0])):    # data only contain features
         method(cur_ds, i)
 
     if test_ds:
