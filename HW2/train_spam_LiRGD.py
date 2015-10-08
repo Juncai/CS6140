@@ -10,8 +10,8 @@ import Consts as c
 k = 10  # fold
 result_path = 'results/spamLiRGD_1.acc'
 model_name = 'spam_' + str(k) + 'fold'
-# lamda = 0.0000002
-lamda = 0.00005
+lamda = 0.0000002
+# lamda = 0.00005
 is_batch = False
 normalization = Preprocess.zero_mean_unit_var
 # normalization = Preprocess.shift_and_scale

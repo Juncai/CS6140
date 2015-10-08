@@ -24,8 +24,9 @@ def main():
 
     # start training
     model = gd.LinearRegressionGD()
+    model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
     try:
-        model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
+        pass
     except KeyboardInterrupt:
         print 'Interrupted'
     finally:
