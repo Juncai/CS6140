@@ -22,10 +22,12 @@ testing_data = loader.load_dataset('data/housing_test.txt')
 Preprocess.normalize_features_all(normalization, training_data[0], testing_data[0], not_norm=cols_not_norm)
 
 
+
 # start training
 model = gd.LinearRegressionGD()
+model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
 try:
-    model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
+    pass
 except KeyboardInterrupt:
     print 'Interrupted'
 finally:
@@ -36,10 +38,10 @@ finally:
     print 'Error for testing data is:'
     print testing_mse
 
-    result = {}
-    result['TrainingMSE'] = str(training_mse)
-    result['TestingMSE'] = str(testing_mse)
-    result['Iteration'] = str(model.iter_count)
+result = {}
+result['TrainingMSE'] = str(training_mse)
+result['TestingMSE'] = str(testing_mse)
+result['Iteration'] = str(model.iter_count)
 
-    # log the training result to file
-    util.write_result_to_file(result_path, model_name, result)
+# log the training result to file
+util.write_result_to_file(result_path, model_name, result)

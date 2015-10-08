@@ -10,19 +10,20 @@ import Consts as c
 k = 30  # fold
 result_path = 'results/spamLoRGD_1.acc'
 model_name = 'spam_' + str(k) + 'fold_zeroMean'
-lamda = 0.000000001
+lamda = 0.000002
 is_batch = False
-normalization = Preprocess.zero_mean_unit_var
-# normalization = Preprocess.shift_and_scale
-# term_fun = util.acc_higher_than
-term_fun = util.acc_stable
+# normalization = Preprocess.zero_mean_unit_var
+normalization = Preprocess.shift_and_scale
+term_fun = util.acc_higher_than
+# term_fun = util.acc_stable
 # term_fun = util.mse_less_than
-# term_thresh = 0.89
-term_thresh = 0.00001
+term_thresh = 0.885
+# term_thresh = 0.00001
+cols_not_norm = [i for i in range(48, 54)]
 
 # laod and preprocess training data
 training_data = loader.load_dataset('data/spambase.data')
-Preprocess.normalize_features_all(normalization, training_data[0])
+Preprocess.normalize_features_all(normalization, training_data[0], not_norm=cols_not_norm)
 
 
 # start training
@@ -37,7 +38,7 @@ for i in range(k):
 
 
     model = gd.LogisticRegressionGD()
-    model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
+    model.build(tr_data[0], tr_data[1], lamda, term_fun, term_thresh, is_batch)
 
     training_test_res = model.test(tr_data[0], tr_data[1], util.compute_acc_confusion_matrix)
     training_accs.append(training_test_res[0])
@@ -69,6 +70,8 @@ print 'Mean Training Confusion Matrix is:'
 print mean_training_cm
 print 'Mean Testing Confusion Matrix is:'
 print mean_testing_cm
+print 'Iteration count: '
+print model.iter_count
 
 result = {}
 result['Fold'] = str(k)
@@ -82,6 +85,8 @@ result['MeanTrainingCM'] = str(mean_training_cm)
 result['MeanTestingCM'] = str(mean_testing_cm)
 result['ROC'] = str(roc)
 result['AUC'] = str(auc)
+result['Theta'] = str(model.theta)
+result['Iteration'] = str(model.iter_count)
 
 
 
