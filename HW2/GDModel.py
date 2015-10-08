@@ -70,8 +70,8 @@ class LogisticRegressionGD(rm.RegressionModel):
         y = np.array([[l] for l in labels])
 
         # initialize the theta and iteration counter
-        # theta = np.zeros((len(x[0]), 1))
-        theta = np.array([[random.random()] for i in range(len(x[0]))])
+        theta = np.zeros((len(x[0]), 1))
+        # theta = np.array([[random.random()] for i in range(len(x[0]))])
 
         self.iter_count = 0
 
