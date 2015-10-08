@@ -122,9 +122,10 @@ def acc_higher_than(theta, features, label, thresh):
     y = [yy[0] for yy in y]
     label = [l[0] for l in label]
     cur_acc = acc(y, label)
+    cur_mse = mse(y, label)
     print 'acc: ' + str(cur_acc)
-    print 'mse: ' + str(mse(y, label))
-    return cur_acc >= thresh
+    print 'mse: ' + str(cur_mse)
+    return cur_acc >= thresh or cur_mse <= 0.10447
 
 
 def logistic_fun_batch(theta, features):
