@@ -1,4 +1,4 @@
 Model: housing
-TrainingMSE 22.999965226
-Iteration 2884
-TestingMSE 22.5527836408
+TrainingMSE 22.1699997122
+Iteration 18334
+TestingMSE 22.8613098529
