@@ -21,8 +21,6 @@ training_data = loader.load_dataset('data/housing_train.txt')
 testing_data = loader.load_dataset('data/housing_test.txt')
 Preprocess.normalize_features_all(normalization, training_data[0], testing_data[0], not_norm=cols_not_norm)
 
-
-
 # start training
 model = gd.LinearRegressionGD()
 model.build(training_data[0], training_data[1], lamda, term_fun, term_thresh, is_batch)
@@ -39,6 +37,7 @@ finally:
     print testing_mse
 
 result = {}
+result['Theta'] = str(model.theta)
 result['TrainingMSE'] = str(training_mse)
 result['TestingMSE'] = str(testing_mse)
 result['Iteration'] = str(model.iter_count)
