@@ -116,7 +116,7 @@ def acc_higher_than(theta, features, label, thresh):
     '''
     Return True if the accuracy is higher than or equal to the threshold, False otherwise
     '''
-    x = [[1] + f for f in features]
+    x = [[1] + f.tolist() for f in features]
     x = np.array(x)
     y = np.dot(x, theta)
     y = [yy[0] for yy in y]

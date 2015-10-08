@@ -10,13 +10,13 @@ import Consts as c
 k = 20  # fold
 result_path = 'results/spamLiRGD_2.acc'
 model_name = 'spam_' + str(k) + 'fold'
-lamda = 0.0000002
+lamda = 0.00002
 # lamda = 0.00005
 is_batch = False
 normalization = Preprocess.zero_mean_unit_var
 # normalization = Preprocess.shift_and_scale
 term_fun = util.acc_higher_than
-term_thresh = 0.885
+term_thresh = 0.89
 
 # laod and preprocess training data
 training_data = loader.load_dataset('data/spambase.data')
