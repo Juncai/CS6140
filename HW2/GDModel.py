@@ -3,6 +3,7 @@ import RegressionModel as rm
 import random
 import Utilities as util
 import math
+from collections import deque
 
 
 class LinearRegressionGD(rm.RegressionModel):
@@ -56,6 +57,7 @@ class LinearRegressionGD(rm.RegressionModel):
 
 class LogisticRegressionGD(rm.RegressionModel):
     iter_count = 0
+    accs = deque([])
 
     def __init__(self, theta=[]):
         self.theta = theta
@@ -69,10 +71,13 @@ class LogisticRegressionGD(rm.RegressionModel):
 
         # initialize the theta and iteration counter
         theta = np.zeros((len(x[0]), 1))
+        # theta = np.array([[random.random()] for i in range(len(x[0]))])
+
         self.iter_count = 0
 
         # recursively update theta
         while not term_fun(theta, features, y, thresh):
+        # while not term_fun(theta, features, y, self.accs, thresh):
             if is_batch:
                 hx = np.array(util.logistic_fun_batch(theta, features))
                 diffs = y - hx
@@ -82,13 +87,15 @@ class LogisticRegressionGD(rm.RegressionModel):
                         sum += diffs[i][0] * x[i][j]
                     theta[j][0] = theta[j][0] + lamda * sum
             else:
-                for j in range(len(theta)):
-                    for i in range(len(features[0])):
+                for i in range(len(features[0])):
+                    hx = util.logistic_fun(theta, x[i])
+                    diff = y[i][0] - hx
+                    for j in range(len(theta)):
                         tmp1 = theta[j][0]
                         tmp2 = util.logistic_fun(theta, x[i])
                         tmp3 = y[i][0]
                         tmp4 = x[i][j]
-                        theta[j][0] = theta[j][0] + lamda * (util.logistic_fun(theta, x[i]) - y[i][0]) * x[i][j]
+                        theta[j][0] = theta[j][0] + lamda * diff * x[i][j]
             self.iter_count += 1
 
         self.theta = theta

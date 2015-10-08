@@ -5,6 +5,19 @@ import Consts as c
 HOUSING_DELI = None
 SPAM_DELI = ','
 
+def acc_stable(theta, features, label, last_n_accs, thresh):
+    x = [[1] + f for f in features]
+    x = np.array(x)
+    y = np.dot(x, theta)
+    y = [yy[0] for yy in y]
+    label = [l[0] for l in label]
+    cur_acc = acc(y, label)
+    print 'acc: ' + str(cur_acc)
+    print 'mse: ' + str(mse(y, label))
+    last_n_accs.append(cur_acc)
+    if len(last_n_accs) > 10:
+        last_n_accs.popleft()
+    return np.var(last_n_accs) < thresh
 
 def calculate_auc(roc):
     auc = 0
@@ -109,8 +122,8 @@ def acc_higher_than(theta, features, label, thresh):
     y = [yy[0] for yy in y]
     label = [l[0] for l in label]
     cur_acc = acc(y, label)
-    print cur_acc
-    print mse(y, label)
+    print 'acc: ' + str(cur_acc)
+    print 'mse: ' + str(mse(y, label))
     return cur_acc >= thresh
 
 

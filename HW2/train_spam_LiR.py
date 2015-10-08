@@ -74,6 +74,7 @@ result['MeanTrainingCM'] = str(mean_training_cm)
 result['MeanTestingCM'] = str(mean_testing_cm)
 result['ROC'] = str(roc)
 result['AUC'] = str(auc)
+result['Theta'] = str(model.theta)
 
 
 
