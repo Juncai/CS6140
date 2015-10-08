@@ -142,7 +142,8 @@ def logistic_fun_batch(theta, features):
     return y
 
 def logistic_fun(theta, x):
-    x = [1] + x
+    # x = x.tolist()
+    # x = [1] + x
     wx = np.dot(x, theta)[0]
     return 1.0 / (1 + np.exp(-wx))
 
@@ -152,7 +153,7 @@ def mse_less_than(theta, features, label, thresh):
     '''
     Return True if the error is less than the threshold, False otherwise
     '''
-    x = [[1] + f for f in features]
+    x = [[1] + f.tolist() for f in features]
     x = np.array(x)
     y = np.dot(x, theta)
     y = [yy[0] for yy in y]

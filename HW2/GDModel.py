@@ -15,7 +15,7 @@ class LinearRegressionGD(rm.RegressionModel):
 
     def build(self, features, labels, lamda, term_fun, thresh, is_batch=True):
         # construct x with the bias column
-        x = [[1] + f for f in features]
+        x = [[1] + f.tolist() for f in features]
         x = np.array(x)
         y = np.array([[l] for l in labels])
 
@@ -65,13 +65,13 @@ class LogisticRegressionGD(rm.RegressionModel):
 
     def build(self, features, labels, lamda, term_fun, thresh, is_batch=True):
         # construct x with the bias column
-        x = [[1] + f for f in features]
+        x = [[1] + f.tolist() for f in features]
         x = np.array(x)
         y = np.array([[l] for l in labels])
 
         # initialize the theta and iteration counter
-        theta = np.zeros((len(x[0]), 1))
-        # theta = np.array([[random.random()] for i in range(len(x[0]))])
+        # theta = np.zeros((len(x[0]), 1))
+        theta = np.array([[random.random()] for i in range(len(x[0]))])
 
         self.iter_count = 0
 
@@ -95,6 +95,7 @@ class LogisticRegressionGD(rm.RegressionModel):
                         tmp2 = util.logistic_fun(theta, x[i])
                         tmp3 = y[i][0]
                         tmp4 = x[i][j]
+                        tmp5 = theta[j][0] + lamda * diff * x[i][j]
                         theta[j][0] = theta[j][0] + lamda * diff * x[i][j]
             self.iter_count += 1
 
