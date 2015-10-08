@@ -6,11 +6,11 @@ import RegressionModel as rm
 import Consts as c
 
 # training parameter
-k = 50  # fold
-result_path = 'results/spamLiR_3.acc'
-model_name = 'spam_' + str(k) + 'fold_zeroMean'
-normalization = Preprocess.zero_mean_unit_var
-# normalization = Preprocess.shift_and_scale
+k = 60  # fold
+result_path = 'results/spamRidge_2.acc'
+model_name = 'spam_' + str(k) + 'fold_' + 'shift_scale'
+# normalization = Preprocess.zero_mean_unit_var
+normalization = Preprocess.shift_and_scale
 
 
 # laod and preprocess training data
@@ -28,7 +28,7 @@ for i in range(k):
     (tr_data, te_data) = Preprocess.prepare_k_fold_data(training_data, k, i + 1)
 
 
-    model = rm.LinearRegression()
+    model = rm.Ridge()
     model.build(tr_data[0], tr_data[1])
 
     training_test_res = model.test(tr_data[0], tr_data[1], util.compute_acc_confusion_matrix)

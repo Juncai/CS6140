@@ -1,6 +1,7 @@
 import numpy as np
 import RegressionModel as rm
 import random
+import Utilities as util
 import math
 
 
@@ -73,7 +74,7 @@ class LogisticRegressionGD(rm.RegressionModel):
         # recursively update theta
         while not term_fun(theta, features, y, thresh):
             if is_batch:
-                hx = np.array(self.logistic_fun(theta, features))
+                hx = np.array(util.logistic_fun_batch(theta, features))
                 diffs = y - hx
                 for j in range(len(theta)):
                     sum = 0
@@ -83,10 +84,14 @@ class LogisticRegressionGD(rm.RegressionModel):
             else:
                 for j in range(len(theta)):
                     for i in range(len(features[0])):
-                        theta[j][0] = theta[j][0] + lamda * (self.logistic_fun(theta, x[i]) - labels[i][0]) * x[i][j]
+                        tmp1 = theta[j][0]
+                        tmp2 = util.logistic_fun(theta, x[i])
+                        tmp3 = y[i][0]
+                        tmp4 = x[i][j]
+                        theta[j][0] = theta[j][0] + lamda * (util.logistic_fun(theta, x[i]) - y[i][0]) * x[i][j]
             self.iter_count += 1
 
         self.theta = theta
 
 
-
+    # def update_theta(self, ):
