@@ -9,7 +9,7 @@ def main():
     # training parameter
     result_path = 'results/housingLiRGD_1.mse'
     model_name = 'housing'
-    lamda = 0.0005  # 0.000015
+    lamda = 0.000015  # 0.000015
     is_batch = False
     # normalization = Preprocess.zero_mean_unit_var
     normalization = Preprocess.shift_and_scale
@@ -37,6 +37,7 @@ def main():
         print testing_mse
 
         result = {}
+        result['Theta'] = str(model.theta)
         result['TrainingMSE'] = str(training_mse)
         result['TestingMSE'] = str(testing_mse)
         result['Iteration'] = str(model.iter_count)
