@@ -40,7 +40,7 @@ class RegressionModel():
 
 
     def get_prediction(self, features):
-        x = [[1] + f for f in features]
+        x = [[1] + f.tolist() for f in features]
         x = np.array(x)
         y = np.dot(x, self.theta)
         y_1_d = [yy[0] for yy in y]

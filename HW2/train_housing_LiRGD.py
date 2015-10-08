@@ -13,7 +13,7 @@ is_batch = False
 # normalization = Preprocess.zero_mean_unit_var
 normalization = Preprocess.shift_and_scale
 term_fun = util.mse_less_than
-term_thresh = 23.585  
+term_thresh = 22.17
 cols_not_norm = [0,7]
 
 # laod and preprocess training data
