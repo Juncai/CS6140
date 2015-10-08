@@ -54,7 +54,7 @@ def normalize_features(methods, cols, train_ds, test_ds=None):
         test_ds = cur_ds[len(train_ds):]
 
 
-def normalize_features_all(method, train_ds, test_ds=None):
+def normalize_features_all(method, train_ds, test_ds=None, not_norm=()):
     '''
     Apply given normalize method to all of the feature columns
     '''
@@ -64,8 +64,10 @@ def normalize_features_all(method, train_ds, test_ds=None):
     if test_ds:
         cur_ds = train_ds + test_ds
 
+
     for i in range(len(cur_ds[0])):    # data only contain features
-        method(cur_ds, i)
+        if i not in not_norm:
+            method(cur_ds, i)
 
     if test_ds:
         train_ds = cur_ds[0:len(train_ds)]

@@ -6,16 +6,20 @@ import RegressionModel as rm
 import Consts as c
 
 # training parameter
-k = 60  # fold
-result_path = 'results/spamRidge_2.acc'
+k = 50  # fold
+result_path = 'results/spamRidge_3.acc'
 model_name = 'spam_' + str(k) + 'fold_' + 'shift_scale'
-# normalization = Preprocess.zero_mean_unit_var
-normalization = Preprocess.shift_and_scale
+normalization = Preprocess.zero_mean_unit_var
+# normalization = Preprocess.shift_and_scale
+# cols_not_norm = [i for i in range(54)]
+# cols_not_norm = [i for i in range(48, 54)]
+cols_not_norm = ()
+
 
 
 # laod and preprocess training data
 training_data = loader.load_dataset('data/spambase.data')
-Preprocess.normalize_features_all(normalization, training_data[0])
+Preprocess.normalize_features_all(normalization, training_data[0], not_norm=cols_not_norm)
 
 # start training
 training_accs = []
@@ -74,6 +78,7 @@ result['MeanTrainingCM'] = str(mean_training_cm)
 result['MeanTestingCM'] = str(mean_testing_cm)
 result['ROC'] = str(roc)
 result['AUC'] = str(auc)
+result['Theta'] = str(model.theta)
 
 
 

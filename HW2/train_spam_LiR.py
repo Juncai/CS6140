@@ -7,10 +7,10 @@ import Consts as c
 
 # training parameter
 k = 50  # fold
-result_path = 'results/spamLiR_3.acc'
+result_path = 'results/spamLiR_4.acc'
 model_name = 'spam_' + str(k) + 'fold_zeroMean'
-normalization = Preprocess.zero_mean_unit_var
-# normalization = Preprocess.shift_and_scale
+# normalization = Preprocess.zero_mean_unit_var
+normalization = Preprocess.shift_and_scale
 
 
 # laod and preprocess training data

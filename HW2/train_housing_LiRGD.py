@@ -9,7 +9,7 @@ def main():
     # training parameter
     result_path = 'results/housingLiRGD_1.mse'
     model_name = 'housing'
-    lamda = 0.000015  # 0.000015
+    lamda = 0.00005  # 0.000015
     is_batch = False
     # normalization = Preprocess.zero_mean_unit_var
     normalization = Preprocess.shift_and_scale
