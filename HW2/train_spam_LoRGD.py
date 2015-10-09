@@ -7,17 +7,17 @@ import Consts as c
 
 
 # training parameter
-k = 10  # fold
+k = 15  # fold
 result_path = 'results/spamLoRGD_1.acc'
 model_name = 'spam_' + str(k) + 'fold_shiftScale'
-lamda = 0.1
+lamda = 0.01
 is_batch = False
 # normalization = Preprocess.zero_mean_unit_var
 normalization = Preprocess.shift_and_scale
 term_fun = util.acc_higher_than
 # term_fun = util.acc_stable
 # term_fun = util.mse_less_than
-term_thresh = 0.88
+term_thresh = 0.89
 # term_thresh = 0.00001
 # cols_not_norm = [i for i in range(48, 54)]
 cols_not_norm = []

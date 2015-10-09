@@ -74,9 +74,10 @@ class LogisticRegressionGD(rm.RegressionModel):
         theta = np.array([[random.random()] for i in range(len(x[0]))])
 
         self.iter_count = 0
+        acc_count = [0, 0]
 
         # recursively update theta
-        while not term_fun(theta, features, y, thresh):
+        while not term_fun(theta, features, y, thresh, acc_count):
         # while not term_fun(theta, features, y, self.accs, thresh):
             if is_batch:
                 hx = np.array(util.logistic_fun_batch(theta, features))
