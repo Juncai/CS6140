@@ -13,7 +13,7 @@ import Tree
 k = 10
 term_con = c.LAYER
 term_thresh = 7
-result_path = 'results/spamDT_9.acc'
+result_path = 'results/spamDT_10.acc'
 model_name = 'spam_' + str(k) + 'fold_' + term_con + '_' + str(term_thresh)
 
 
@@ -33,8 +33,8 @@ for i in range(k):
 
 
     tree = Tree.DecisionTree()
-    tree.build(training_data[0],
-               training_data[1], threshs, term_con, term_thresh)
+    tree.build(tr_data[0],
+               tr_data[1], threshs, term_con, term_thresh)
 
     training_test_res = tree.test(tr_data[0], tr_data[1])
     training_accs.append(training_test_res[0])
