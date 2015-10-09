@@ -24,9 +24,9 @@ class LinearRegressionGD(rm.RegressionModel):
         # theta = np.array([[random.random()] for i in range(len(x[0]))])
         # theta = np.ones((len(x[0]), 1))
         self.iter_count = 0
-
+        acc_count = [0, 0]
         # recursively update theta
-        while not term_fun(theta, features, y, thresh):
+        while not term_fun(theta, features, y, thresh, acc_count):
             if is_batch:
                 hx = np.dot(x, theta)
                 diffs = hx - y
