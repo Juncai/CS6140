@@ -112,7 +112,7 @@ def get_term_fun(config):
         return acc_higher_than
 
 
-def acc_higher_than(theta, features, label, thresh):
+def acc_higher_than(theta, features, label, thresh, acc_count):
     '''
     Return True if the accuracy is higher than or equal to the threshold, False otherwise
     '''
@@ -123,9 +123,14 @@ def acc_higher_than(theta, features, label, thresh):
     label = [l[0] for l in label]
     cur_acc = acc(y, label)
     cur_mse = mse(y, label)
+    if acc_count[0] == cur_acc:
+        acc_count[1] = acc_count[1] + 1
+    else:
+        acc_count[0] = cur_acc
+        acc_count[1] = 1
     print 'acc: ' + str(cur_acc)
     print 'mse: ' + str(cur_mse)
-    return cur_acc >= thresh or cur_mse <= 0.10447
+    return cur_acc >= thresh or acc_count[1] >= 100
 
 
 def logistic_fun_batch(theta, features):
@@ -149,7 +154,7 @@ def logistic_fun(theta, x):
 
 
 
-def mse_less_than(theta, features, label, thresh):
+def mse_less_than(theta, features, label, thresh, add=None):
     '''
     Return True if the error is less than the threshold, False otherwise
     '''
