@@ -7,13 +7,14 @@ import Consts as c
 
 # training parameter
 k = 50  # fold
-result_path = 'results/spamRidge_3.acc'
+result_path = 'results/spamRidge_4.acc'
 model_name = 'spam_' + str(k) + 'fold_' + 'shift_scale'
 normalization = Preprocess.zero_mean_unit_var
 # normalization = Preprocess.shift_and_scale
 # cols_not_norm = [i for i in range(54)]
 # cols_not_norm = [i for i in range(48, 54)]
 cols_not_norm = ()
+lamda = 2
 
 
 
@@ -33,7 +34,7 @@ for i in range(k):
 
 
     model = rm.Ridge()
-    model.build(tr_data[0], tr_data[1])
+    model.build(tr_data[0], tr_data[1], lamda)
 
     training_test_res = model.test(tr_data[0], tr_data[1], util.compute_acc_confusion_matrix)
     training_accs.append(training_test_res[0])

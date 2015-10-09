@@ -57,7 +57,7 @@ class LinearRegression(RegressionModel):
         Calculate theta using: theta=(XTX)-1XTY
         '''
         # add bias column
-        x = [[1] + f for f in features]
+        x = [[1] + f.tolist() for f in features]
         # x = features
         x = np.array(x)
         # y = np.array(label)
@@ -78,9 +78,9 @@ class Ridge(RegressionModel):
         Calculate theta using: theta=(XTX+lambdaI)-1XTY
         '''
         # add bias column
-        x = [[1] + f for f in features]
+        x = [[1] + f.tolist() for f in features]
         # construct lambdaI
-        lambda_i = lamda * np.eye(len(features[0]))
+        lambda_i = lamda * np.eye(len(x[0]))
 
         x = np.array(x)
         y = np.array([[l] for l in label])

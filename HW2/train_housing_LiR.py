@@ -11,7 +11,8 @@ def main():
     model_name = 'housing_shiftAndScale'
     # normalization = Preprocess.zero_mean_unit_var
     normalization = Preprocess.shift_and_scale
-    cols_not_norm = (0,7,12)
+    # cols_not_norm = (0,7,12)
+    cols_not_norm = []
 
     # laod and preprocess training data
     training_data = loader.load_dataset('data/housing_train.txt')
