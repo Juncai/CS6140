@@ -1,15 +1,9 @@
 import NNModel
 import csv
 import Utilities as util
-import argparse
 import numpy as np
 
 data_file = 'data/perceptronData.txt'
-# parse arguments
-# parser = argparse.ArgumentParser()
-# parser.add_argument('datafile', required=True, nargs=1)
-# opts = parser.parse_args()
-# data_file = opts['datafile']
 
 # load and preprocess data
 features = []
@@ -17,11 +11,7 @@ labels = []
 with open(data_file) as f:
     for line in csv.reader(f, delimiter='\t'):
         cur_l = int(line[-1])
-        # reflection
         sign = 1
-        if cur_l == -1:
-            sign = -1
-            cur_l = -cur_l
         cur_f = [sign * float(l) for l in line[:-1]]
         features.append(cur_f)
         labels.append([cur_l])

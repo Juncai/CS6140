@@ -36,17 +36,10 @@ class LinearRegressionGD(rm.RegressionModel):
                         sum += diffs[j][0] * x[j][i]
                     theta[i][0] = theta[i][0] - lamda * sum
             else:
-                # print str(np.dot(x[0], theta)[0]) + ' ' + str(y[0][0])
-                # print str(np.dot(x[-1], theta)[0]) + ' ' + str(y[-1][0])
                 for i in range(len(x)):
                     hx = np.dot(x[i], theta)[0]
                     diff = hx - y[i][0]
                     for j in range(len(theta)):
-                        # tmp = np.dot(x[i], theta)[0]
-                        # tmp2 =labels[i][0]
-                        # tmp3 = x[i][j]
-                        tmp4 = theta[j][0]
-                        # tmp5 = lamda * (np.dot(x[i], theta)[0] - y[i][0]) * x[i][j]
                         theta[j][0] = theta[j][0] - lamda * diff * x[i][j]
                         if math.isnan(theta[j][0]):
                             print 'something'
@@ -92,12 +85,6 @@ class LogisticRegressionGD(rm.RegressionModel):
                     hx = util.logistic_fun(theta, x[i])
                     diff = y[i][0] - hx
                     for j in range(len(theta)):
-                        tmp1 = theta[j][0]
-                        tmp4 = x[i][j]
-                        tmp5 = theta[j][0] + lamda * diff * x[i][j]
                         theta[j][0] = theta[j][0] + lamda * diff * x[i][j]
             self.iter_count += 1
             self.theta = theta
-
-
-    # def update_theta(self, ):

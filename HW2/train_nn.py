@@ -1,8 +1,5 @@
 import NNModel
-import csv
 import Utilities as util
-import argparse
-import numpy as np
 
 # init training data
 nn_input = [[1, 0, 0, 0, 0, 0, 0, 0],
@@ -18,9 +15,9 @@ nn_output = nn_input
 
 # create perceptron
 model = NNModel.NN()
-lamda = 0.1
+lamda = 3
 try:
-    model.build((nn_input, nn_output), lamda, util.mse_for_nn, 0.2)
+    model.build((nn_input, nn_output), lamda, util.mse_for_nn, 1000)
 except KeyboardInterrupt:
     pass
 # calculate normalized weights

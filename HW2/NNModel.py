@@ -12,8 +12,13 @@ class Perceptron():
     def build(self, features, labels, lamda, term_fun, thresh, is_batch=True):
         # construct x with the bias column
         x = [[1] + f for f in features]
+        for i in range(len(x)):
+            if labels[i][0] == -1:
+                x[i] = [-xx for xx in x[i]]
+                labels[i] = 1
+
         x = np.array(x)
-        # mistakes list
+# mistakes list
         m = []
         # init training records
         self.training_record.clear()
@@ -71,8 +76,8 @@ class NN():
             self.w_out = w_out
             # print nn_output
             # terminate when error satisfied
-            self.mse = term_fun(nn_output[0], target)
-            if self.mse <= thresh:
+            # self.mse = term_fun(nn_output[0], target)
+            if self.iter_count > thresh:
                 break
             for data_i in range(len(nn_input)):
 
@@ -97,7 +102,7 @@ class NN():
                     sum = 0
                     for j in range(len(z)):
                         sum += err_z[j] * w_out[j][i + 1]
-                    err_y.append(sum)
+                    err_y.append(sum * y[i] * (1 - y[i]))
                 for i in range(len(w_in[0])):
                     for j in range(len(w_in)):
                         w_in[j][i] = w_in[j][i] + lamda * err_y[j] * nn_input[data_i][i]
