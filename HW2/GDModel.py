@@ -70,8 +70,8 @@ class LogisticRegressionGD(rm.RegressionModel):
         y = np.array([[l] for l in labels])
 
         # initialize the theta and iteration counter
-        theta = np.zeros((len(x[0]), 1))
-        # theta = np.array([[random.random()] for i in range(len(x[0]))])
+        # theta = np.zeros((len(x[0]), 1))
+        theta = np.array([[random.random()] for i in range(len(x[0]))])
 
         self.iter_count = 0
 
@@ -87,19 +87,16 @@ class LogisticRegressionGD(rm.RegressionModel):
                         sum += diffs[i][0] * x[i][j]
                     theta[j][0] = theta[j][0] + lamda * sum
             else:
-                for i in range(len(features[0])):
+                for i in range(len(x)):
                     hx = util.logistic_fun(theta, x[i])
                     diff = y[i][0] - hx
                     for j in range(len(theta)):
                         tmp1 = theta[j][0]
-                        tmp2 = util.logistic_fun(theta, x[i])
-                        tmp3 = y[i][0]
                         tmp4 = x[i][j]
                         tmp5 = theta[j][0] + lamda * diff * x[i][j]
                         theta[j][0] = theta[j][0] + lamda * diff * x[i][j]
             self.iter_count += 1
-
-        self.theta = theta
+            self.theta = theta
 
 
     # def update_theta(self, ):

@@ -1,3 +1,4 @@
+import numpy as np
 import GDModel as gd
 import Utilities as util
 
@@ -35,7 +36,7 @@ features = [[0.5, 0.1, 0.3, 0.6],
             [0.1, 0.8, 0.6, 0.2],
             [0.2, 0.5, 0.1, 0.4],
             [0.1, 0.7, 0.7, 0.1]]
-
+features = np.array(features)
 label = [1, 0, 1, 0]
 
 lamda = 0.0001
