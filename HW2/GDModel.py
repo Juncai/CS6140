@@ -12,7 +12,6 @@ class LinearRegressionGD(rm.RegressionModel):
     def __init__(self, theta=[]):
         self.theta = theta
 
-
     def build(self, features, labels, lamda, term_fun, thresh, is_batch=True):
         # construct x with the bias column
         x = [[1] + f.tolist() for f in features]
