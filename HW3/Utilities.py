@@ -51,13 +51,13 @@ def compute_acc_confusion_matrix(predictions, labels, thresh=0.5):
     for i in range(len(labels)):
         if labels[i] == 1:
             pos += 1
-            if predictions[i] >= thresh:
+            if predictions[i] > thresh:
                 true_pos += 1
             else:
                 false_neg += 1
         else:
             neg += 1
-            if predictions[i] < thresh:
+            if predictions[i] <= thresh:
                 true_neg += 1
             else:
                 false_pos += 1

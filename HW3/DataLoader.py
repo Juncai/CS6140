@@ -32,10 +32,10 @@ def load_arrays(path):
     '''
     Read other data from file, no need to be matrix
     '''
-    f = open(path, 'r')
     ar = []
-    for line in f:
-        ar.append([float(x) for x in line.split(',')])
+    with open(path, 'r') as f:
+        for line in f:
+            ar.append([float(x) for x in line.split()])
     return ar
 
 

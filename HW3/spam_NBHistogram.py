@@ -6,10 +6,8 @@ import Models as m
 
 # training parameter
 k = 10  # fold
-result_path = 'results/spamNBGaussian_1.acc'
+result_path = 'results/spamNBHistogram_1.acc'
 model_name = 'spam_' + str(k) + 'fold'
-
-
 
 # laod and preprocess training data
 training_data = loader.load_dataset('data/spambase.data')
@@ -27,7 +25,7 @@ for i in range(k):
     tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
 
 
-    model = m.NBGaussian()
+    model = m.NBHistogram()
     model.build(tr_data[0], tr_data[1])
 
     training_test_res = model.test(tr_data[0], tr_data[1], util.compute_acc_confusion_matrix)

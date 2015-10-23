@@ -1,10 +1,11 @@
 import numpy as np
 import math
+import numbers
 
 
 class Model():
     def test(self, features, labels, err_fun):
-        return err_fun(self.predict(features), labels)
+        return err_fun(self.predict(features), labels, 0)
 
     def predict(self, features):
         '''
@@ -29,12 +30,13 @@ class Model():
         d.sort(key=lambda x: x[0],reverse=True)
         d_predict = [y[0] for y in d]
         d_label = [y[1] for y in d]
-        pos = reduce(lambda x, y: x + 1 if y == 1 else x, [0] + d_label)
-        neg = reduce(lambda x, y: x + 1 if y == 0 else x, [0] + d_label)
+        cnts = np.bincount(d_label)
+        neg_cnt = cnts[0]
+        pos_cnt = cnts[1]
         roc = []
         for i in range(len(d)):
             roc.append(self.false_pos_true_pos(d_predict, d_label,
-                                               pos, neg, i))
+                                               pos_cnt, neg_cnt, i))
         return roc
 
     def false_pos_true_pos(self, pred, label, pos, neg, ind):
@@ -45,9 +47,9 @@ class Model():
                 true_pos += 1
             else:
                 false_pos += 1
-        return (float(false_pos) / neg if neg > 0 else 0,
+        tmp =  (float(false_pos) / neg if neg > 0 else 0,
                 float(true_pos) / pos if pos > 0 else 1)
-
+        return tmp
 
 class GDA(Model):
     mu = [[], []]
@@ -113,7 +115,9 @@ class GDA(Model):
     def predict_single(self, feature):
         p_0 = self.compute_prob(feature, 0)
         p_1 = self.compute_prob(feature, 1)
-        return 0 if p_0 > p_1 else 1
+        # log_odds = np.log(p_1 / p_0)
+        return -1 if p_0 > p_1 else 1
+        # return log_odds
 
     def compute_prob(self, feature, label):
         x = np.array(feature)
@@ -130,11 +134,13 @@ class NB(Model):
     def predict_single(self, feature):
         # init the possibilities
         p = [self.py[0], self.py[1]]
-        # TODO calculate the possibility of label 1
         for y in (0, 1):
             for ind, x in enumerate(feature):
-               p[y] *= self._get_p_x_y(ind, x, y)
-        return 0 if p[0] > p[1] else 1
+                tmp = self._get_p_x_y(ind, x, y)
+                p[y] *= tmp
+
+        log_odds = np.log(p[1] / p[0])
+        return log_odds
 
     def build(self, features, labels):
         # TODO calculate prior
@@ -219,16 +225,32 @@ class NBGaussian(NB):
                 else:
                     non_spam_dp.append(features[j][i])
             spam_e = np.mean(spam_dp)
+            overall_std = np.std([ff[i] for ff in features])
             spam_std = np.std(spam_dp)
             non_spam_e = np.mean(non_spam_dp)
             non_spam_std = np.std(non_spam_dp)
-            self.params[0].append([non_spam_e, non_spam_std if non_spam_std != 0 else 0.5])
-            self.params[1].append([spam_e, spam_std if spam_std != 0 else 0.5])
+            self.params[0].append([non_spam_e, overall_std if overall_std != 0 else 0.1])
+            self.params[1].append([spam_e, overall_std if overall_std != 0 else 0.1])
+
+    def predict_single(self, feature):
+        # init the possibilities
+        p = [self.py[0], self.py[1]]
+        for y in (0, 1):
+            for ind, x in enumerate(feature):
+                tmp = self._get_p_x_y(ind, x, y)
+                p[y] += tmp
+
+        log_odds = p[1] - p[0]
+        return log_odds
 
     def _get_p_x_y(self, x_ind, x_val, y):
         e, std = self.params[int(y)][x_ind]
-        # TODO calculate p
-        res = 1 / math.pow(2 * math.pi * (std ** 2), 0.5) * math.pow(math.e, (-(x_val - e) ** 2) / (2 * std ** 2))
+        return self.log_gauss_pdf(x_val, e, std)
+
+    def log_gauss_pdf(self, x, e, std):
+        # TODO calculate log gauss pdf
+        res = -0.5 * math.log(2. * math.pi * std ** 2) - (x - e) ** 2 / 2. / std ** 2 * math.log(math.e)
+        # res = math.pow(2 * math.pi * (std ** 2), -0.5) * math.pow(math.e, (-(x - e) ** 2) / (2 * std ** 2))
         return res
 
 
@@ -264,7 +286,7 @@ class NBHistogram(NB):
             self.histo[1].append(spam_histo)
 
 
-    def _get_histo(self, dp, min, mean, max, sub_mean_1, sub_mean_2):
+    def _get_histo(self, dp, min, max, mean, sub_mean_1, sub_mean_2):
         dp_len = len(dp)
         bins = []
         bins.append(min)
@@ -280,16 +302,36 @@ class NBHistogram(NB):
 
         px = [0., 0., 0., 0.]
         for x in dp:
-            for ind, val in enumerate(bins):
+            for ind, val in enumerate(bins[1:]):
                 if x <= val:
-                    px[ind - 1] += 1
+                    px[ind] += 1
+                    break
 
         px = [((p + 1) / (dp_len + 2)) for p in px]
 
         return bins, px
 
     def _get_p_x_y(self, x_ind, x_val, y):
+        '''
+        Get p x y from the histogram
+        :param x_ind:
+        :param x_val:
+        :param y:
+        :return:
+        '''
+        assert isinstance(x_ind, int)
+        assert isinstance(x_val, numbers.Number)
+        assert isinstance(y, numbers.Number)
+
         bins, px = self.histo[int(y)][x_ind]
-        for ind, val in enumerate(bins):
-            if val < 
+        # if the testing feature value is small than the min value in training set,
+        # then it will be categorize to the first bin. Similar operation is done if
+        # feature value exceeds the maximum value in training set
+        res = None
+        for ind, val in enumerate(bins[1:]):
+            if x_val < val:
+                res = px[ind]
+                break
+        if res is None:
+            res = px[-1]
         return res

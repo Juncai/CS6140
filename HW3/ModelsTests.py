@@ -42,11 +42,10 @@ class ModelsTests(unittest.TestCase):
 
     def test_gaussian_calculation(self):
         model = Models.NBGaussian()
-        model.params = [[[0.5, 2]], [[1, 3]]]
-        act_res = model._get_p_x_y(0, 0.5, 0)
-        exp_res = 0.5 * math.pow(2 * math.pi, -0.5)
-        self.assertEqual(act_res, exp_res)
 
+        act_res = model.gauss_pdf(2.85, 0.007, 0.07)
+        exp_res = math.pow(2 * math.pi, -0.5)
+        self.assertEqual(act_res, exp_res)
 
 
 if __name__ == '__main__':
