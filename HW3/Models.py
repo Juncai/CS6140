@@ -97,7 +97,7 @@ class GDA(Model):
             self.mu[0].append(sum_0 / neg_count)
             self.mu[1].append(sum_1 / pos_count)
             self.mu_all.append((sum_0 + sum_1) / m)
-        # TODO calculate sigma as a shared covariance matrix
+        # calculate sigma as a shared covariance matrix
         self.sigma = np.zeros((n, n))
         for i in range(m):
             x_minus_mu_all = np.matrix(x[i] - self.mu_all)  # 1*n
@@ -106,7 +106,7 @@ class GDA(Model):
             self.sigma += tmp
         self.sigma /= m
         self.sigma_inv = np.linalg.inv(self.sigma)
-        # TODO calculate coe
+        # calculate coe
         self.coe = self._compute_coe()
 
     def _compute_coe(self):
@@ -256,6 +256,10 @@ class NBGaussian(NB):
 
 class NBHistogram(NB):
     histo = []
+    bin_num = 4
+
+    def __init__(self, bin_num=4):
+        self.bin_num = bin_num
 
     def _build_model(self, features, labels):
         # TODO calculate conditional histogram for all the features
@@ -273,34 +277,39 @@ class NBHistogram(NB):
                 else:
                     non_spam_dp.append(features[j][i])
 
-            max = np.max(all_dp)
-            min = np.min(all_dp)
-            mean = np.mean(all_dp)
-            spam_mean = np.mean(spam_dp)
-            non_spam_mean = np.mean(non_spam_dp)
-
-            spam_histo = self._get_histo(spam_dp, min, max, mean, spam_mean, non_spam_mean)
-            non_spam_histo = self._get_histo(non_spam_dp, min, max, mean, spam_mean, non_spam_mean)
+            histo = self._get_histo(all_dp, spam_dp, non_spam_dp)
+            spam_histo = histo[1]
+            non_spam_histo = histo[0]
 
             self.histo[0].append(non_spam_histo)
             self.histo[1].append(spam_histo)
 
-
-    def _get_histo(self, dp, min, max, mean, sub_mean_1, sub_mean_2):
-        dp_len = len(dp)
+    def _get_histo(self, all_dp, spam_dp, non_spam_dp):
         bins = []
-        bins.append(min)
-        if sub_mean_1 < sub_mean_2:
-            bins.append(sub_mean_1)
-            bins.append(mean)
-            bins.append(sub_mean_2)
-        else:
-            bins.append(sub_mean_2)
-            bins.append(mean)
-            bins.append(sub_mean_1)
-        bins.append(max)
+        bins.append(np.max(all_dp))
+        bins.append(np.min(all_dp))
+        bins.append(np.mean(all_dp))
+        bins.append(np.mean(spam_dp))
+        bins.append(np.mean(non_spam_dp))
 
-        px = [0., 0., 0., 0.]
+        if self.bin_num == 9:
+            bins.append(np.max(all_dp))
+            bins.append(np.min(all_dp))
+            bins.append(np.mean(all_dp))
+            bins.append(np.mean(spam_dp))
+            bins.append(np.mean(non_spam_dp))
+        elif self.bin_num != 4:
+            print 'Wrong bin number.'
+            return (None, None)
+        bins.sort()
+        non_spam_histo = self._get_histo_helper(non_spam_dp, bins)
+        spam_histo = self._get_histo_helper(spam_dp, bins)
+        return non_spam_histo, spam_histo
+
+    def _get_histo_helper(self, dp, bins):
+        dp_len = len(dp)
+
+        px = np.zeros((1, len(bins) - 1)).tolist()[0]
         for x in dp:
             for ind, val in enumerate(bins[1:]):
                 if x <= val:

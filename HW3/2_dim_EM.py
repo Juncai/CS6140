@@ -6,8 +6,8 @@ import numpy as np
 GAUSS2 = 'data/2gaussian.txt'
 GAUSS3 = 'data/3gaussian.txt'
 
-path = GAUSS2
-k = 2
+path = GAUSS3
+k = 3
 
 x = np.matrix(loader.load_arrays(path))
 x = np.transpose(x)

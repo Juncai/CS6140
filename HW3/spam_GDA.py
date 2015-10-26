@@ -40,6 +40,7 @@ print 'Testing accs are:'
 print testing_accs
 print 'Mean testing acc is:'
 print mean_testing_acc
+print np.shape(model.sigma)
 
 result = {}
 result['Fold'] = str(k)
