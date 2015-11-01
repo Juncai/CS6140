@@ -1,0 +1,2 @@
+usage: Main.py -config CONFIG
+CONFIG is the configuration file for the task

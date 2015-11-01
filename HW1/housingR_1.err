@@ -1,0 +1,1 @@
+{'modelfile': 'housingR_1.reg', 'classifiertype': 'R', 'testresult': 'housingR_1.err', 'trainingdata': 'data/housing_train.txt', 'normalizemethod': 'ShiftAndScale', 'TestingErr': '23.5391480842', 'testingdata': 'data/housing_test.txt', 'TrainingErr': '23.321026436', 'validationmethod': 'TestingData'}
