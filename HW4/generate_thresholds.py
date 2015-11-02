@@ -85,9 +85,15 @@ if __name__ == '__main__':
     # generate_thresholds(data[0], thresh_path, config[2])
 
     # generate thresholds for vote
-    data_path = 'data/vote_parsed.data'
-    config_path = 'data/vote/vote.config'
-    thresh_path = 'data/vote.threshes'
-    data = loader.load_pickle_file(data_path)
-    config = loader.parse_UCI_config(config_path)
-    generate_thresholds(data[0], thresh_path, config[2])
+    # data_path = 'data/vote_parsed.data'
+    # config_path = 'data/vote/vote.config'
+    # thresh_path = 'data/vote.threshes'
+    # data = loader.load_pickle_file(data_path)
+    # config = loader.parse_UCI_config(config_path)
+    # generate_thresholds(data[0], thresh_path, config[2])
+
+    # generate thresholds for housing test data
+    data_path = 'data/housing_test.txt'
+    thresh_path = 'data/housing_test.threshes'
+    data = loader.load_dataset(data_path)
+    generate_thresholds(data[0], thresh_path)

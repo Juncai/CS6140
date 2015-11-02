@@ -4,12 +4,13 @@ import DataLoader as loader
 import Preprocess
 import numpy as np
 import Utilities as util
-import DecisionTree as dt
-import Boosting as b
+import Bagging as b
 
 # training parameter
 k = 10  # fold
 layer_thresh = 7
+T = 50
+N = 3000
 result_path = 'results/spamDTBagging_1.acc'
 model_name = 'spam_' + str(k) + 'fold'
 threshes_path = 'data/spambase.threshes'
@@ -32,26 +33,16 @@ for i in range(k):
     tr_n, f_d = np.shape(tr_data[0])
     te_n, = np.shape(te_data[1])
     round = 0
-    dts = []    # the decision tree collection
-    while round < 50:
+    bagging = b.Bagging()
+    while round < T:
+        # prepare training data
         round += 1
-        boost.add_model(ds.DecisionStump, tr_data[0], tr_data[1], threshes)
-        boost.update_predict(tr_data[0], training_predict)
-        boost.update_predict(te_data[0], testing_predict)
-        c_model_err = boost.model[-1].n_err
-        print("Prediction 1: {}".format(testing_predict[0]))
-        print("Model {} Round decision stump error: {}".format(round, c_model_err))
-        c_tr_err = util.get_err_from_predict(training_predict, tr_data[1])
-        print("Model {} Round training error: {}".format(round, c_tr_err))
-        round_tr_err.append(c_tr_err)
-        c_te_err = util.get_err_from_predict(testing_predict, te_data[1])
-        print("Model {} Round testing error: {}".format(round, c_te_err))
-        round_te_err.append(c_te_err)
-        converged =  c_te_err / test_err > 1 - tol
-        test_err = c_te_err
+        b_tr_data = util.get_bagging_data(tr_data, N)
+        bagging.add_tree(b_tr_data[0], b_tr_data[1], threshes, layer_thresh)
 
-    training_errs.append(round_tr_err[-1])
-    testing_errs.append(round_te_err[-1])
+    # test the bagging model and compute testing acc
+    training_errs.append(bagging.test(tr_data[0], tr_data[1], util.acc))
+    testing_errs.append(bagging.test(te_data[0], te_data[1], util.acc))
 
 
 mean_training_err = np.mean(training_errs)

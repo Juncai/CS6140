@@ -1,8 +1,24 @@
 import numpy as np
 import math
-
+import numpy.random as random
 HOUSING_DELI = None
 SPAM_DELI = ','
+
+
+def get_bagging_data(ds, n):
+    '''
+
+    :param ds:
+    :param n:
+    :return:
+    '''
+    n_array = [i for i in range(len(ds[0]))]
+    selected_inds = random.choice(n_array, n, replace=True)
+    res = [[], []]
+    for ind in selected_inds:
+        res[0].append(ds[0][ind])
+        res[1].append(ds[1][ind])
+    return res
 
 
 def pre_compute_threshes(features, label, threshes, d):
@@ -265,7 +281,5 @@ def mse(predictions, labels):
     '''
     if len(labels) == 0:
         return 0
-    res = 0.0
-    for i in range(len(labels)):
-        res += math.pow(predictions[i] - labels[i], 2)
-    return res / len(labels)
+    errs = np.array(predictions) - labels
+    return sum(errs ** 2) / len(labels)
