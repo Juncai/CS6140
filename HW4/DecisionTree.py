@@ -128,10 +128,11 @@ class DecisionTree():
         return h
 
     def find_majority(self, label):
-        tmp_arr = [int(y) for y in label]
-        tmp_arr = np.array(tmp_arr)
+        if len(label) == 1:
+            return label[0]
+        tmp_arr = np.array([int(y) for y in label])
         counts = np.bincount(tmp_arr)
-        return tmp_arr[np.argmax(counts)]
+        return np.argmax(counts)
 
     def get_subtree_data(self, features, label, f_index, thresh):
         # generate features and label for subtrees

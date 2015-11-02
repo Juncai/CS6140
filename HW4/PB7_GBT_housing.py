@@ -9,11 +9,10 @@ import copy
 
 # training parameter
 layer_thresh = 7
-N = 3000
 R = 100
 result_path = 'results/housingGBT_1.err'
 model_name = 'housingGBT'
-threshes_path = 'data/housing.threshes'
+threshes_path = 'data/housing_test.threshes'
 
 # laod and preprocess training data
 tr_data = loader.load_dataset('data/housing_test.txt')  # use test data as training set
@@ -32,7 +31,6 @@ gbt = g.GradientBoostedTrees()
 gbt_label = copy.deepcopy(tr_data[1])
 while round < R:
     # prepare training data
-    round += 1
     gbt.add_tree(tr_data[0], gbt_label, threshes, layer_thresh)
 
     # training error is from newly added tree, testing error is from current GBT
@@ -43,17 +41,21 @@ while round < R:
     # TODO update the labels
     gbt_label = (np.array(gbt_label) - pred).tolist()
 
+    print('Round {} with training error: {}, testing error: {}.'.format(round, training_errs[-1], testing_errs[-1]))
+    round += 1
+
 mean_training_err = np.mean(training_errs)
 mean_testing_err = np.mean(testing_errs)
 
-print('Training errs are:')
-print(training_errs)
-print('Mean training err is:')
-print(mean_training_err)
-print('Testing errs are:')
-print(testing_errs)
-print('Mean testing err is:')
-print(mean_testing_err)
+# print('Training errs are:')
+# print(training_errs)
+# print('Mean training err is:')
+# print(mean_training_err)
+# print('Testing errs are:')
+# print(testing_errs)
+# print('Mean testing err is:')
+# print(mean_testing_err)
+print('Final testing err is: {}'.format(testing_errs[-1]))
 
 result = {}
 result['Trainingerrs'] = str(training_errs)

@@ -10,7 +10,7 @@ class Bagging():
 
 
     def test(self, features, labels, err_fun):
-        return err_fun(self.predict(features), labels, 0)
+        return err_fun(self.predict(features), labels)
 
 
     def predict(self, features):

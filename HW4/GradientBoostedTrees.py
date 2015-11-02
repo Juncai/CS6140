@@ -1,6 +1,6 @@
 import numpy as np
 import math
-import DecisionTree as dt
+import RegressionTree as rt
 
 
 class GradientBoostedTrees():
@@ -10,7 +10,7 @@ class GradientBoostedTrees():
 
 
     def test(self, features, labels, err_fun):
-        return err_fun(self.predict(features), labels, 0)
+        return err_fun(self.predict(features), labels)
 
 
     def predict(self, features):
@@ -30,6 +30,6 @@ class GradientBoostedTrees():
 
 
     def add_tree(self, features, label, threshes, layer_thresh):
-        t = dt.DecisionTree()
+        t = rt.RegressionTree()
         t.build(features, label, threshes, layer_thresh)
         self.trees.append(t)
