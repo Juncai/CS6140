@@ -2,6 +2,40 @@ import DataLoader as loader
 import pickle
 import numpy as np
 
+def generate_thresholds_8news(features, thresh_path):
+    '''
+
+    :param features:
+    :param thresh_path:
+    :return:
+    '''
+    # TODO find all the feature numbers appear in the data
+    f_set = set()
+    for f in features:
+        for k in f.keys():
+            f_set.add(k)
+    f_list = list(f_set)
+    f_list.sort()
+
+    # TODO for each feature, establish the thresholds list
+    f_threshs = {}
+    for f_k in f_list:
+        cur_f = []
+        cur_t = []
+        for f in features:
+            if f_k in f.keys():
+                cur_f.append(f[f_k])
+        cur_f = np.unique(cur_f).tolist()
+        # cur_t.append('all_ture')    # a threshold below all the values
+        for i in range(len(cur_f) - 1):
+            cur_t.append(np.mean(cur_f[i:i+2]))
+        # cur_t.append('all_false')   # a threshold above all the values
+        f_threshs[f_k] = cur_t
+
+    with open(thresh_path, 'wb+') as f:
+        pickle.dump(f_threshs, f)
+    return f_threshs
+
 def generate_thresholds(features, thresh_path, meta_f=None):
     n, d = np.shape(features)
     threshes = []

@@ -1,6 +1,7 @@
 import random
 import Model
 import Utilities as util
+import copy
 
 class DecisionStump(Model.Model):
     f_ind = None
@@ -8,9 +9,10 @@ class DecisionStump(Model.Model):
     w_err = None
     n_err = None    # non weighted err
 
-    def __init__(self):
+    def __init__(self, ecoc=None):
         self.f_ind = None
         self.thresh = None
+        self.ecoc = ecoc
 
     def predict_single(self, feature):
         if not isinstance(self.thresh, tuple):
@@ -22,6 +24,48 @@ class DecisionStump(Model.Model):
         self.f_ind, self.thresh, self.w_err, self.n_err = self._split_on_err(features, label, d, threshes)
 
     def _split_on_err(self, features, label, d, threshes):
+        if self.ecoc is not None:
+            self._split_on_err_ecoc(features, label, d, threshes, self.ecoc)
+        else:
+            self._split_on_err_normal(features, label, d, threshes)
+
+    def _split_on_err_ecoc(self, features, label, d, threshes, ecoc):
+        # TODO preprocess labels
+        bin_label = copy.deepcopy(label)
+        for i in range(len(ecoc)):
+            for j in range(len(bin_label)):
+                if bin_label[j] == i:
+                    bin_label[j] = ecoc[i]
+
+        best_res = None
+        max = 0 # max value of 1/2-error(h)
+        # calculate errors for all true and all false
+        err_t = 0
+        err_f = 0
+        for i in range(len(bin_label)):
+            if bin_label[i] == 0:
+                err_t += d[i]
+            else:
+                err_f += d[i]
+        err_t = abs(err_t - 0.5)
+        err_f = abs(err_f - 0.5)
+        if err_t > err_f:
+            max = err_t
+            best_res = (0, 'all true', err_t)
+        else:
+            max = err_f
+            best_res = (0, 'all false', err_f)
+
+
+        # calculate weighted errors for other thresholds
+        for t_k in threshes.keys():
+            for t in threshes[t_k]:
+                w_err = 0
+                for
+
+
+
+    def _split_on_err_normal(self, features, label, d, threshes):
         # TODO need to handle the discrete features
         '''
         Find the best pair based on IG

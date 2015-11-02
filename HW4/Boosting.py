@@ -52,8 +52,8 @@ class Boosting():
         pred = self.model[ind].predict_single(feature)
         return pred * self.a[ind]
 
-    def add_model(self, m_class, features, label, threshes):
-        m = m_class()
+    def add_model(self, m_class, features, label, threshes, ecoc=None):
+        m = m_class(ecoc)
         m.train(features, label, self.d, threshes)
         alpha = self.compute_alpha(m.w_err)
         self.a.append(alpha)

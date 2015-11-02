@@ -2,6 +2,31 @@ import numpy as np
 import pickle
 
 
+def load_8news_data(path, save_path):
+    features = []
+    label = []
+    l_ind = 0
+    with open(path, 'r') as f:
+        for line in f:
+            raw = line.split()
+            # the first column is label
+            label.append(int(raw[0]))
+            # parse the features
+            features.append(parse_8news_features(raw[1:]))
+
+    # save the data to the file
+    with open(save_path, 'wb+') as f:
+        pickle.dump([features, label], f)
+    return features, label
+
+def parse_8news_features(los):
+    f_dict = {}
+    for s in los:
+        k_v = s.split(':')
+        f_dict[int(k_v[0])] = float(k_v[1])
+    return f_dict
+
+
 def load_UCI_data(path, meta, save_path):
     '''
     Load UCI data according to the meta data, than save to the file
