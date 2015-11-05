@@ -1,8 +1,40 @@
 import numpy as np
 import math
 import numpy.random as random
-HOUSING_DELI = None
-SPAM_DELI = ','
+from scipy.spatial.distance import hamming
+
+
+def ecoc_test(features, label, boosts, ecoc, ):
+    pred = ecoc_prediction(features, boosts, ecoc)
+    return acc_exact(pred, label)
+
+def ecoc_prediction(features, boosts, ecoc):
+    pred = []
+    for f in features:
+        pred.append(ecoc_prediction_single(f, boosts, ecoc))
+    return pred
+
+
+def ecoc_prediction_single(feature, boosts, ecoc):
+    '''
+
+    :param feature:
+    :param boosts:
+    :param ecoc: ecoc for predicting
+    :return:
+    '''
+    min_hamming_dist = 1.
+    match_label = 0
+    code = []
+    for b in boosts:
+        c_pred = b.predict_single(feature)
+        code.append(c_pred if c_pred == 1 else 0)  # replace -1 with 0
+    for ind, c in enumerate(ecoc):
+        cur_hd = hamming(c, code)
+        if cur_hd < min_hamming_dist:
+            min_hamming_dist = cur_hd
+            match_label = ind
+    return match_label
 
 
 def get_bagging_data(ds, n):
@@ -21,7 +53,7 @@ def get_bagging_data(ds, n):
     return res
 
 
-def pre_compute_threshes(features, label, threshes, d):
+def pre_compute_threshes(features, label, threshes):
     '''
 
     :param features:
@@ -31,27 +63,21 @@ def pre_compute_threshes(features, label, threshes, d):
     '''
     threshes_cheatsheet = []
     n, dim = np.shape(features)
+    label_plus_one = np.array(label) + 1
     for i in range(dim):
-        # cur_f = [(x[i], ind) for ind,x in enumerate(features)]
+        cur_f = np.array([x[i] for x in features])
+
         # sorted(cur_f, key= lambda x: x[0])
         c_cs = []
         for t in threshes[i]:
-            w_err = 0.
-            n_err = 0.
-            for j in range(n):
-                if features[j][i] > t:
-                    if label[j] == -1:
-                        w_err += d[i]
-                        n_err += 1
-                else:
-                    if label[j] == 1:
-                        w_err += d[i]
-                        n_err += 1
-            c_cs.append((w_err, n_err / n))
+            cur_r = np.sign(cur_f - t) + 1
+            cur_r = np.logical_xor(cur_r, label_plus_one)
+            # cur_r = [1 if rr else 0 for rr in cur_r]
+            c_cs.append(cur_r)
         threshes_cheatsheet.append(c_cs)
     return threshes_cheatsheet
 
-def pre_compute_threshes_discrete(features, label, threshes, d):
+def pre_compute_threshes_uci(features, label, threshes):
     '''
 
     :param features:
@@ -73,17 +99,16 @@ def pre_compute_threshes_discrete(features, label, threshes, d):
                 cur_r = cur_f - t
                 cur_r = np.logical_xor(cur_r, n_ones)
                 cur_r = np.logical_xor(cur_r, label_plus_one)
-                w_err = np.dot(cur_r, d)
-                n_err = np.dot(cur_r, n_ones)
-                c_cs.append((w_err, n_err / n))
+                # w_err = np.dot(cur_r, d)
+                c_cs.append(cur_r)
         else:
             # continuous feature
             for t in threshes[i][1]:
                 cur_r = np.sign(cur_f - t) + 1
                 cur_r = np.logical_xor(cur_r, label_plus_one)
-                w_err = np.dot(cur_r, d)
-                n_err = np.dot(cur_r, n_ones)
-                c_cs.append((w_err, n_err / n))
+                # w_err = np.dot(cur_r, d)
+                # n_err = np.dot(cur_r, n_ones)
+                c_cs.append(cur_r)
         threshes_cheatsheet.append(c_cs)
     return threshes_cheatsheet
 
@@ -154,13 +179,54 @@ def pre_compute_threshes_2(features, label, threshes, d):
         threshes_cheatsheet.append(c_cs)
     return threshes_cheatsheet
 
+def get_auc_from_predict(pred, label):
+    unique_pred = np.unique(pred).tolist()
+    unique_pred.sort(reverse=True)
+    unique_pred = [max(unique_pred) + 1] + unique_pred
+    # pred_label = [pl for pl in zip(list(pred), list(label))]
+    # pred_label.sort(key=lambda pl:pl[0], reverse=True)
+    roc = [(0, 0)]
+    n = len(pred)
+
+    # d_predict = [y[0] for y in pred_label]
+    # d_label = [y[1] for y in pred_label]
+    pos = 0
+    neg = 0
+    for i in range(n):
+        pos += 1 if label[i] == 1 else 0
+        neg += 1 if label[i] == -1 else 0
+    for t in unique_pred:
+        roc.append(false_pos_true_pos(pred, label, pos, neg, t))
+
+    # TODO calculate auc from roc
+    return calculate_auc(roc)
+
+def calculate_auc(roc):
+    auc = 0
+    for i in range(1, len(roc)):
+        auc += (roc[i][0] - roc[i-1][0]) * (roc[i][1] + roc[i-1][1])
+    return auc / 2.0
+
+def false_pos_true_pos(pred, label, pos, neg, thresh):
+    false_pos = 0
+    true_pos = 0
+    n = len(pred)
+    for i in range(n):
+        if pred[i] >= thresh:
+            if label[i] == 1:
+                true_pos += 1
+            else:
+                false_pos += 1
+    return (float(false_pos) / neg if neg > 0 else 0,
+            float(true_pos) / pos if pos > 0 else 1)
+
 def get_err_from_predict(pred, label):
     n = len(pred)
     err = 0.
     for i in range(n):
-        if pred[i] > 0 and label[i] == -1:
+        if pred[i] >= 0 and label[i] == -1:
             err += 1
-        elif pred[i] <= 0 and label[i] == 1:
+        elif pred[i] < 0 and label[i] == 1:
             err += 1
     return err / n
 
@@ -261,6 +327,14 @@ def sigmoid(x):
 
 def mistakes_less_than(m, thresh):
     return len(m) < thresh
+
+def acc_exact(predictions, labels):
+    n = len(labels)
+    count = 0.
+    for i in range(n):
+        if predictions[i] == labels[i]:
+            count += 1
+    return count / n
 
 def acc(predictions, labels, thresh=0.5):
     '''

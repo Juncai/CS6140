@@ -36,8 +36,8 @@ class Boosting():
         :param features:
         :param pre_pred:
         '''
-        n = np.shape(features)[0]
-        for i in range(n):
+        dim = np.shape(features)[0]
+        for i in range(dim):
             pred = self.predict_with_model_single(-1, features[i])
             pre_pred[i] += pred
 
@@ -52,9 +52,9 @@ class Boosting():
         pred = self.model[ind].predict_single(feature)
         return pred * self.a[ind]
 
-    def add_model(self, m_class, features, label, threshes, ecoc=None):
+    def add_model(self, m_class, features, label, threshes, thresh_cs, ecoc=None):
         m = m_class(ecoc)
-        m.train(features, label, self.d, threshes)
+        m.train(features, label, self.d, threshes, thresh_cs)
         alpha = self.compute_alpha(m.w_err)
         self.a.append(alpha)
         self.update_d(features, label, m, alpha)

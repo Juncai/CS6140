@@ -4,20 +4,27 @@ import numpy as np
 import Utilities as util
 import DecisionStump as ds
 import Boosting as b
-import profile
 
 def main():
     # training parameter
+    target = 'crx'
+    # target = 'vote'
     k = 10  # fold
     round_limit = 200
-    result_path = 'results/spamODSBoosting_1.acc'
-    model_name = 'spam_' + str(k) + 'fold'
-    threshes_path = 'data/spambase.threshes'
+
+    if target == 'crx':
+        result_path = 'results/crxBoosting_1.acc'
+        model_name = 'crx_' + str(k) + 'fold'
+        threshes_path = 'data/crx.threshes'
+        data_path = 'data/crx_parsed.data'
+    else:
+        result_path = 'results/voteBoosting_1.acc'
+        model_name = 'vote_' + str(k) + 'fold'
+        threshes_path = 'data/vote.threshes'
+        data_path = 'data/vote_parsed.data'
 
     # laod and preprocess training data
-    training_data = loader.load_dataset('data/spambase.data')
-    # TODO convert labels from {0, 1} to {-1, 1}
-    util.replace_zero_label_with_neg_one(training_data)
+    training_data = loader.load_pickle_file(data_path)
 
     # load thresholds
     threshes = loader.load_pickle_file(threshes_path)
@@ -40,7 +47,7 @@ def main():
         # TODO prepare distribution
         d = util.init_distribution(len(tr_data[0]))
         # TODO compute thresholds cheat sheet
-        thresh_cs = util.pre_compute_threshes(tr_data[0], tr_data[1], threshes)
+        thresh_cs = util.pre_compute_threshes_uci(tr_data[0], tr_data[1], threshes)
         boost = b.Boosting(d)
         testing_predict = np.zeros((1, te_n)).tolist()[0]
         training_predict = np.zeros((1, tr_n)).tolist()[0]
@@ -52,7 +59,7 @@ def main():
         tol = 1e-5
         te_auc = 2.
         round = 0
-        while round < round_limit and not converged:
+        while round < round_limit: # and not converged:
             round += 1
             boost.add_model(ds.DecisionStump, tr_data[0], tr_data[1], threshes, thresh_cs)
             boost.update_predict(tr_data[0], training_predict)
@@ -64,21 +71,21 @@ def main():
             c_tr_err = util.get_err_from_predict(training_predict, tr_data[1])
             c_te_err = util.get_err_from_predict(testing_predict, te_data[1])
             # TODO calculate the AUC for testing results
-            c_te_auc = util.get_auc_from_predict(testing_predict, te_data[1])
-            round_tr_err.append(c_tr_err)
-            round_te_err.append(c_te_err)
-            round_te_auc.append(c_te_auc)
-            print('Round: {} Feature: {} Threshold: {} Round_err: {:.12f} Train_err: {:.12f} Test_err {:.12f} AUC {:.12f}'.format(round, c_f_ind, c_thresh, c_model_err, c_tr_err, c_te_err, c_te_auc))
-            converged =  abs(c_te_auc - te_auc) / te_auc <= tol
-            te_auc = c_te_auc
+            # c_te_auc = util.get_auc_from_predict(testing_predict, te_data[1])
+            # round_tr_err.append(c_tr_err)
+            # round_te_err.append(c_te_err)
+            # round_te_auc.append(c_te_auc)
+            print('Round: {} Feature: {} Threshold: {} Round_err: {:.12f} Train_err: {:.12f} Test_err {:.12f}'.format(round, c_f_ind, c_thresh, c_model_err, c_tr_err, c_te_err))
+            # converged =  abs(c_te_auc - te_auc) / te_auc <= tol
+            # te_auc = c_te_auc
 
-        training_errs.append(round_tr_err[-1])
-        testing_errs.append(round_te_err[-1])
-        if k == 0:
-            round_err_1st_boost = round_model_err
-            tr_errs_1st_boost = round_tr_err
-            te_errs_1st_boost = round_te_err
-            te_auc_1st_boost = round_te_auc
+        training_errs.append(c_tr_err)
+        testing_errs.append(c_te_err)
+        # if k == 0:
+        #     round_err_1st_boost = round_model_err
+        #     tr_errs_1st_boost = round_tr_err
+        #     te_errs_1st_boost = round_te_err
+            # te_auc_1st_boost = round_te_auc
 
         # break      # for testing
 

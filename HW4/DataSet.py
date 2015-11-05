@@ -59,6 +59,7 @@ class DataSet():
         for i in member_index:
             res[0].append(self.data[0][i])
             res[1].append(self.data[1][i])
+        return  res
 
     def get_training(self):
         return self.get_data(self.tr)

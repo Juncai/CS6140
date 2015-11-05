@@ -1,0 +1,8 @@
+Model: spam_10fold
+ROC []
+Fold 10
+Trainingerrs [0.20458937198067634]
+AUC 0.0
+Testingerrs [0.21475054229934923]
+MeanTrainingAcc 0.204589371981
+MeanTestingAcc 0.214750542299

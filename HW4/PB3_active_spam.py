@@ -7,7 +7,7 @@ import Boosting as b
 
 # training parameter
 result_path = 'results/spamActive_1.acc'
-model_name = 'spam_' + str(k) + 'fold'
+model_name = 'spamActive'
 threshes_path = 'data/spambase.threshes'
 
 # laod and preprocess training data
@@ -25,41 +25,40 @@ roc = []
 auc = 0.0
 k_folds = Preprocess.prepare_k_folds(training_data, k)
 
-for i in range(k):
-    tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
-    tr_n, f_d = np.shape(tr_data[0])
-    te_n, = np.shape(te_data[1])
-    # TODO prepare distribution
-    d = util.init_distribution(len(tr_data[0]))
-    boost = b.Boosting(d)
-    testing_predict = np.zeros((1, te_n)).tolist()[0]
-    training_predict = np.zeros((1, tr_n)).tolist()[0]
-    round_tr_err = []
-    round_te_err = []
-    converged = False
-    tol = 1e-5
-    test_err = 2.
-    round = 0
-    max_round = 500
-    while round < max_round:
-        round += 1
-        boost.add_model(ds.DecisionStump, tr_data[0], tr_data[1], threshes)
-        boost.update_predict(tr_data[0], training_predict)
-        boost.update_predict(te_data[0], testing_predict)
-        c_model_err = boost.model[-1].n_err
-        print("Prediction 1: {}".format(testing_predict[0]))
-        print("Model {} Round decision stump error: {}".format(round, c_model_err))
-        c_tr_err = util.get_err_from_predict(training_predict, tr_data[1])
-        print("Model {} Round training error: {}".format(round, c_tr_err))
-        round_tr_err.append(c_tr_err)
-        c_te_err = util.get_err_from_predict(testing_predict, te_data[1])
-        print("Model {} Round testing error: {}".format(round, c_te_err))
-        round_te_err.append(c_te_err)
-        converged =  c_te_err / test_err > 1 - tol
-        test_err = c_te_err
+tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
+tr_n, f_d = np.shape(tr_data[0])
+te_n, = np.shape(te_data[1])
+# TODO prepare distribution
+d = util.init_distribution(len(tr_data[0]))
+boost = b.Boosting(d)
+testing_predict = np.zeros((1, te_n)).tolist()[0]
+training_predict = np.zeros((1, tr_n)).tolist()[0]
+round_tr_err = []
+round_te_err = []
+converged = False
+tol = 1e-5
+test_err = 2.
+round = 0
+max_round = 500
+while round < max_round:
+    round += 1
+    boost.add_model(ds.DecisionStump, tr_data[0], tr_data[1], threshes)
+    boost.update_predict(tr_data[0], training_predict)
+    boost.update_predict(te_data[0], testing_predict)
+    c_model_err = boost.model[-1].n_err
+    print("Prediction 1: {}".format(testing_predict[0]))
+    print("Model {} Round decision stump error: {}".format(round, c_model_err))
+    c_tr_err = util.get_err_from_predict(training_predict, tr_data[1])
+    print("Model {} Round training error: {}".format(round, c_tr_err))
+    round_tr_err.append(c_tr_err)
+    c_te_err = util.get_err_from_predict(testing_predict, te_data[1])
+    print("Model {} Round testing error: {}".format(round, c_te_err))
+    round_te_err.append(c_te_err)
+    converged =  c_te_err / test_err > 1 - tol
+    test_err = c_te_err
 
-    training_errs.append(round_tr_err[-1])
-    testing_errs.append(round_te_err[-1])
+training_errs.append(round_tr_err[-1])
+testing_errs.append(round_te_err[-1])
 
 
 mean_training_err = np.mean(training_errs)

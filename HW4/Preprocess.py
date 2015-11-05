@@ -133,29 +133,19 @@ def get_i_fold(k_folds, ind):
             training_data[1] += f[1]
     return training_data, testing_data
 
-def get_c_percent(c, k_folds, ind):
+def get_c_percent(c, ds):
     '''
     Use ith fold as testing data, then get c percent of the rest to be training data
     :param k_folds:
     :param ind:
     :return:
     '''
-    n = 0
-    for f in k_folds:
-        n += len(f[0])
-    n_tr = n - len(k_folds[0][0])
-    n_target = int(n * c / 100)
-    n_array = [i for i in range(n_tr)]
-    ind_sample = random.choice(n_array, n_target, replace=False)
-    testing_data = k_folds[ind]
-    all_training_data = [[], []]
-
-    for i, f in enumerate(k_folds):
-        if i != ind:
-            all_training_data[0] += f[0]
-            all_training_data[1] += f[1]
-    training_data = [[], []]
-    for i in ind_sample:
-        training_data[0].append(all_training_data[0][i])
-        training_data[1].append(all_training_data[1][i])
-    return all_training_data, testing_data
+    n = len(ds[0])
+    size = int(n * c / 100)
+    all = [i for i in range(n)]
+    tr = random.choice(all, size, replace=False)
+    res = ([], [])
+    for i in tr:
+        res[0].append(ds[0][i])
+        res[1].append(ds[1][i])
+    return  res

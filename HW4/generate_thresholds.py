@@ -26,10 +26,11 @@ def generate_thresholds_8news(features, thresh_path):
             if f_k in f.keys():
                 cur_f.append(f[f_k])
         cur_f = np.unique(cur_f).tolist()
-        # cur_t.append('all_ture')    # a threshold below all the values
+        cur_f = [0] + cur_f     # prepend a zero to the feature values
+        cur_t.append(-1)    # a threshold below all the values
         for i in range(len(cur_f) - 1):
             cur_t.append(np.mean(cur_f[i:i+2]))
-        # cur_t.append('all_false')   # a threshold above all the values
+        cur_t.append(cur_f[-1] + 0.1)   # a threshold above all the values
         f_threshs[f_k] = cur_t
 
     with open(thresh_path, 'wb+') as f:
