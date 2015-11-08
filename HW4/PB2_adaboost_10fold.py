@@ -7,10 +7,10 @@ import Boosting as b
 
 def main():
     # training parameter
-    target = 'crx'
-    # target = 'vote'
+    # target = 'crx'
+    target = 'vote'
     k = 10  # fold
-    round_limit = 200
+    round_limit = 100
 
     if target == 'crx':
         result_path = 'results/crxBoosting_1.acc'

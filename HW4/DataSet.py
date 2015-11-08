@@ -14,7 +14,7 @@ class DataSet():
         self.te = []
         self.re = []
 
-    def random_pick(self, c):
+    def random_pick(self, c, for_active=True):
         '''
         Randomly pick data points from the dataset
         :param c:
@@ -23,7 +23,8 @@ class DataSet():
         self._init_elements()
         size = int(self.n * c / 100)
         self.tr = random.choice(self.all, size, replace=False)
-        self.re = list(set(self.all) - set(self.tr))
+        if for_active:
+            self.re = list(set(self.all) - set(self.tr))
         return self.get_data(self.tr)
 
     def active_pick(self, c, model):
@@ -36,10 +37,10 @@ class DataSet():
         num = int(self.n * c / 100)
         assert isinstance(model, b.Boosting)
         re = self.get_data(self.re)
-        re_preds = model.predict(re[0])
+        re_preds = model.predict(re[0], True)
         new_tr = self.get_low_conf_dp(num, re_preds, 0)
         # update the training and remaining data
-        self.r = list(set(self.r) - set(new_tr))
+        self.re = list(set(self.re) - set(new_tr))
         self.tr = list(set(self.tr).union(set(new_tr)))
         return self.get_training()
 

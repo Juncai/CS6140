@@ -94,7 +94,7 @@ if __name__ == '__main__':
     # generate_thresholds(data[0], thresh_path, config[2])
 
     # generate thresholds for housing test data
-    data_path = 'data/housing_test.txt'
-    thresh_path = 'data/housing_test.threshes'
+    data_path = 'data/housing_train.txt'
+    thresh_path = 'data/housing_train.threshes'
     data = loader.load_dataset(data_path)
     generate_thresholds(data[0], thresh_path)

@@ -8,15 +8,15 @@ import GradientBoostedTrees as g
 import copy
 
 # training parameter
-layer_thresh = 7
-R = 100
+layer_thresh = 2
+R = 10
 result_path = 'results/housingGBT_1.err'
 model_name = 'housingGBT'
-threshes_path = 'data/housing_test.threshes'
+threshes_path = 'data/housing_train.threshes'
 
 # laod and preprocess training data
-tr_data = loader.load_dataset('data/housing_test.txt')  # use test data as training set
-# testing_data = loader.load_dataset('data/housing_test.txt')
+tr_data = loader.load_dataset('data/housing_train.txt')
+te_data = loader.load_dataset('data/housing_test.txt')
 
 # load thresholds
 threshes = loader.load_pickle_file(threshes_path)
@@ -26,17 +26,18 @@ training_errs = []
 testing_errs = []
 
 tr_n, f_d = np.shape(tr_data[0])
-round = 0
+round = 1
 gbt = g.GradientBoostedTrees()
 gbt_label = copy.deepcopy(tr_data[1])
-while round < R:
+while round <= R:
     # prepare training data
     gbt.add_tree(tr_data[0], gbt_label, threshes, layer_thresh)
 
     # training error is from newly added tree, testing error is from current GBT
     pred = gbt.trees[-1].batch_predict(tr_data[0])
-    training_errs.append(util.mse(pred, gbt_label))
-    testing_errs.append(gbt.test(tr_data[0], tr_data[1], util.mse))
+    # training_errs.append(util.mse(pred, gbt_label))
+    training_errs.append(gbt.test(tr_data[0], tr_data[1], util.mse))
+    testing_errs.append(gbt.test(te_data[0], te_data[1], util.mse))
 
     # TODO update the labels
     gbt_label = (np.array(gbt_label) - pred).tolist()

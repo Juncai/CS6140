@@ -2,16 +2,31 @@ import numpy as np
 import math
 import numpy.random as random
 from scipy.spatial.distance import hamming
+import copy
 
+def generate_bin_label_from_ecoc(label, ecoc):
+    bin_label = copy.deepcopy(label)
+    pos_ind = []
 
-def ecoc_test(features, label, boosts, ecoc, ):
+    for ind, v in enumerate(ecoc):
+        if v == 1:
+            pos_ind.append(ind)
+
+    for j, l in enumerate(bin_label):
+        bin_label[j] = 1 if l in pos_ind else -1
+
+    return bin_label
+
+def ecoc_test(features, label, boosts, ecoc):
     pred = ecoc_prediction(features, boosts, ecoc)
     return acc_exact(pred, label)
 
 def ecoc_prediction(features, boosts, ecoc):
     pred = []
     for f in features:
-        pred.append(ecoc_prediction_single(f, boosts, ecoc))
+        c_pred = ecoc_prediction_single(f, boosts, ecoc)
+        # print(c_pred)
+        pred.append(c_pred)
     return pred
 
 
@@ -28,7 +43,8 @@ def ecoc_prediction_single(feature, boosts, ecoc):
     code = []
     for b in boosts:
         c_pred = b.predict_single(feature)
-        code.append(c_pred if c_pred == 1 else 0)  # replace -1 with 0
+
+        code.append(1 if c_pred == 1 else 0)  # replace -1 with 0
     for ind, c in enumerate(ecoc):
         cur_hd = hamming(c, code)
         if cur_hd < min_hamming_dist:
@@ -51,6 +67,26 @@ def get_bagging_data(ds, n):
         res[0].append(ds[0][ind])
         res[1].append(ds[1][ind])
     return res
+
+def pre_compute_threshes_8news(features, label, threshes):
+    '''
+
+    :param features:
+    :param label:
+    :param threshes:
+    :return:
+    '''
+    thresh_cs = {}
+    label_plus_one = np.array(label) + 1
+    for t_k in threshes.keys():
+        c_cs = []
+        cur_f = np.array([(f[t_k] if t_k in f.keys() else 0) for f in features])
+        for t_ind, t in enumerate(threshes[t_k]):
+            cur_r = np.sign(cur_f - t) + 1
+            cur_r = np.logical_xor(cur_r, label_plus_one)
+            c_cs.append(cur_r)
+        thresh_cs[t_k] = c_cs
+    return thresh_cs
 
 
 def pre_compute_threshes(features, label, threshes):
@@ -185,7 +221,8 @@ def get_auc_from_predict(pred, label):
     unique_pred = [max(unique_pred) + 1] + unique_pred
     # pred_label = [pl for pl in zip(list(pred), list(label))]
     # pred_label.sort(key=lambda pl:pl[0], reverse=True)
-    roc = [(0, 0)]
+    # roc = [(0, 0)]
+    roc = []
     n = len(pred)
 
     # d_predict = [y[0] for y in pred_label]
@@ -221,14 +258,20 @@ def false_pos_true_pos(pred, label, pos, neg, thresh):
             float(true_pos) / pos if pos > 0 else 1)
 
 def get_err_from_predict(pred, label):
-    n = len(pred)
-    err = 0.
-    for i in range(n):
-        if pred[i] >= 0 and label[i] == -1:
-            err += 1
-        elif pred[i] < 0 and label[i] == 1:
-            err += 1
-    return err / n
+
+    r_pred = np.sign(pred) + 1
+    label_plus_one = np.array(label) + 1
+    r = np.logical_xor(r_pred, label_plus_one).tolist()
+    return sum(r) / len(label)
+
+    # n = len(pred)
+    # err = 0.
+    # for i in range(n):
+    #     if pred[i] >= 0 and label[i] == -1:
+    #         err += 1
+    #     elif pred[i] < 0 and label[i] == 1:
+    #         err += 1
+    # return err / n
 
 def replace_zero_label_with_neg_one(data):
     data[1] = [-1 if l == 0 else l for l in data[1]]

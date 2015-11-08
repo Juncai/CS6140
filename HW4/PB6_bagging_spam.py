@@ -8,9 +8,8 @@ import Bagging as b
 
 # training parameter
 k = 10  # fold
-layer_thresh = 7
+layer_thresh = 2
 T = 50
-N = 3000
 result_path = 'results/spamDTBagging_1.acc'
 model_name = 'spam_' + str(k) + 'fold'
 threshes_path = 'data/spambase.threshes'
@@ -37,7 +36,7 @@ for i in range(k):
     while round < T:
         # prepare training data
         round += 1
-        b_tr_data = util.get_bagging_data(tr_data, N)
+        b_tr_data = util.get_bagging_data(tr_data, tr_n)
         bagging.add_tree(b_tr_data[0], b_tr_data[1], threshes, layer_thresh)
         r_tr_acc = bagging.trees[-1].test(b_tr_data[0], b_tr_data[1], util.acc)
         r_te_acc = bagging.test(te_data[0], te_data[1], util.acc)

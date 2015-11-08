@@ -37,7 +37,7 @@ class RegressionTree():
         return c_node[0]
 
     def build(self, features, label, threshs, layer_thresh):
-        self.tree = self.build_helper(features, label, threshs, 1, layer_thresh)
+        self.tree = self.build_helper(features, label, threshs, 0, layer_thresh)
 
     def build_helper(self, features, label, threshs, layer, layer_thresh):
         '''
@@ -68,7 +68,7 @@ class RegressionTree():
         Find the best pair based on mse
         '''
         # check the terminating condition
-        if layer > term_thresh:
+        if layer >= term_thresh:
             return (None, np.mean(label)), None, None
 
         best_pair = None
