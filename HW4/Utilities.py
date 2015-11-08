@@ -3,6 +3,7 @@ import math
 import numpy.random as random
 from scipy.spatial.distance import hamming
 import copy
+import pickle
 
 def generate_bin_label_from_ecoc(label, ecoc):
     bin_label = copy.deepcopy(label)
@@ -215,7 +216,7 @@ def pre_compute_threshes_2(features, label, threshes, d):
         threshes_cheatsheet.append(c_cs)
     return threshes_cheatsheet
 
-def get_auc_from_predict(pred, label):
+def get_auc_from_predict(pred, label, return_roc=False):
     unique_pred = np.unique(pred).tolist()
     unique_pred.sort(reverse=True)
     unique_pred = [max(unique_pred) + 1] + unique_pred
@@ -236,7 +237,8 @@ def get_auc_from_predict(pred, label):
         roc.append(false_pos_true_pos(pred, label, pos, neg, t))
 
     # TODO calculate auc from roc
-    return calculate_auc(roc)
+    auc = calculate_auc(roc)
+    return (auc, roc) if return_roc else auc
 
 def calculate_auc(roc):
     auc = 0
@@ -344,13 +346,17 @@ def compute_acc_confusion_matrix(predictions, labels, thresh=0.5):
     return acc, cm
 
 
-def write_result_to_file(path, model_name, result):
+def write_result_to_file(path, model_name, result, save_pickle=False):
     # Log the result
-    f = open(path, 'w+')
-    f.write('Model: ' + model_name + '\n')
-    for k in result.keys():
-        f.write(k + ' ' + str(result[k]) + '\n')
-    f.close()
+    with open(path, 'w+') as f:
+        f.write('Model: ' + model_name + '\n')
+        for k in result.keys():
+            f.write(k + ' ' + str(result[k]) + '\n')
+
+    if save_pickle:
+        pickle_path = path + '.pickle'
+        with open(pickle_path, 'wb+') as pf:
+            pickle.dump(result, pf)
     return
 
 

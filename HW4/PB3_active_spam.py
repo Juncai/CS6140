@@ -10,7 +10,7 @@ import DataSet
 def main():
     # training parameter
     round_limit = 50
-    result_path = 'results/spamActive_1.acc'
+    result_path = 'results/spamActive_final.acc'
     model_name = 'spam_active'
     threshes_path = 'data/spambase.threshes'
 
@@ -59,7 +59,7 @@ def main():
             round += 1
             boost.add_model(ds.DecisionStump, tr_data[0], tr_data[1], threshes, thresh_cs)
             boost.update_predict(tr_data[0], training_predict)
-            # boost.update_predict(te_data[0], testing_predict)
+            boost.update_predict(te_data[0], testing_predict)
             c_model_err = boost.model[-1].w_err
             round_model_err.append(c_model_err)
             c_f_ind = boost.model[-1].f_ind
@@ -102,18 +102,18 @@ def main():
     print(mean_testing_err)
 
     result = {}
-    result['Trainingerrs'] = str(training_errs)
-    result['MeanTrainingAcc'] = str(mean_training_err)
-    result['Testingerrs'] = str(testing_errs)
-    result['MeanTestingAcc'] = str(mean_testing_err)
+    result['Trainingerrs'] = training_errs
+    result['MeanTrainingAcc'] = mean_training_err
+    result['Testingerrs'] = testing_errs
+    result['MeanTestingAcc'] = mean_testing_err
 
     # result['ROC'] = str(roc)
-    result['AUC'] = str(auc)
+    result['AUC'] = auc
 
 
 
     # log the training result to file
-    util.write_result_to_file(result_path, model_name, result)
+    util.write_result_to_file(result_path, model_name, result, True)
 
 if __name__ == '__main__':
     # profile.run('main()')

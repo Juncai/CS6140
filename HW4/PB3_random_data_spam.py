@@ -10,7 +10,7 @@ import DataSet
 def main():
     # training parameter
     round_limit = 50
-    result_path = 'results/spamActive_1.acc'
+    result_path = 'results/spamActive_random_final.acc'
     model_name = 'spam_active'
     threshes_path = 'data/spambase.threshes'
 
@@ -31,7 +31,7 @@ def main():
     # te_auc_1st_boost = None
     roc = []
     auc = 0.0
-    k_folds = Preprocess.prepare_k_folds(training_data, 10)
+    k_folds = Preprocess.prepare_k_folds(training_data, 5)
     tr_data_pool, te_data = Preprocess.get_i_fold(k_folds, 1)
     data_set = DataSet.DataSet(tr_data_pool)
     data_rates = (5, 10, 15, 20, 30, 50)
@@ -92,18 +92,18 @@ def main():
     print(mean_testing_err)
 
     result = {}
-    result['Trainingerrs'] = str(training_errs)
-    result['MeanTrainingAcc'] = str(mean_training_err)
-    result['Testingerrs'] = str(testing_errs)
-    result['MeanTestingAcc'] = str(mean_testing_err)
+    result['Trainingerrs'] = training_errs
+    result['MeanTrainingAcc'] = mean_training_err
+    result['Testingerrs'] = testing_errs
+    result['MeanTestingAcc'] = mean_testing_err
 
     # result['ROC'] = str(roc)
-    result['AUC'] = str(auc)
+    result['AUC'] = auc
 
 
 
     # log the training result to file
-    util.write_result_to_file(result_path, model_name, result)
+    util.write_result_to_file(result_path, model_name, result, True)
 
 if __name__ == '__main__':
     # profile.run('main()')

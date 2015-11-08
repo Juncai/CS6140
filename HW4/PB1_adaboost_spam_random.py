@@ -10,7 +10,7 @@ def main():
     # training parameter
     k = 10  # fold
     round_limit = 1000
-    result_path = 'results/spamRDSBoosting_1.acc'
+    result_path = 'results/spamRDSBoosting_final.acc'
     model_name = 'spam_' + str(k) + 'fold'
     threshes_path = 'data/spambase.threshes'
 
@@ -29,11 +29,12 @@ def main():
     tr_errs_1st_boost = None
     te_errs_1st_boost = None
     te_auc_1st_boost = None
+    te_roc_1st_boost = None
     roc = []
     auc = 0.0
     k_folds = Preprocess.prepare_k_folds(training_data, k)
 
-    for i in range(k):
+    for i in range(1):
         tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
         tr_n, f_d = np.shape(tr_data[0])
         te_n, = np.shape(te_data[1])
@@ -75,11 +76,13 @@ def main():
 
         training_errs.append(round_tr_err[-1])
         testing_errs.append(round_te_err[-1])
-        if k == 0:
+        if i == 0:
             round_err_1st_boost = round_model_err
             tr_errs_1st_boost = round_tr_err
             te_errs_1st_boost = round_te_err
             te_auc_1st_boost = round_te_auc
+            _, te_roc_1st_boost = util.get_auc_from_predict(testing_predict, te_data[1], True)
+
 
         # break      # for testing
 
@@ -97,23 +100,23 @@ def main():
     print(mean_testing_err)
 
     result = {}
-    result['Fold'] = str(k)
-    result['Trainingerrs'] = str(training_errs)
-    result['MeanTrainingAcc'] = str(mean_training_err)
-    result['Testingerrs'] = str(testing_errs)
-    result['MeanTestingAcc'] = str(mean_testing_err)
-    result['1stBoostTrainingError'] = str(tr_errs_1st_boost)
-    result['1stBoostTestingError'] = str(te_errs_1st_boost)
-    result['1stBoostModelError'] = str(round_err_1st_boost)
-    result['1stBoostTestingAUC'] = str(te_auc_1st_boost)
+    result['Fold'] = k
+    result['Trainingerrs'] = training_errs
+    result['MeanTrainingAcc'] = mean_training_err
+    result['Testingerrs'] = testing_errs
+    result['MeanTestingAcc'] = mean_testing_err
+    result['1stBoostTrainingError'] = tr_errs_1st_boost
+    result['1stBoostTestingError'] = te_errs_1st_boost
+    result['1stBoostModelError'] = round_err_1st_boost
+    result['1stBoostTestingAUC'] = te_auc_1st_boost
+    result['1stBoostTestingROC'] = te_roc_1st_boost
 
     # result['ROC'] = str(roc)
-    result['AUC'] = str(auc)
-
+    result['AUC'] = auc
 
 
     # log the training result to file
-    util.write_result_to_file(result_path, model_name, result)
+    util.write_result_to_file(result_path, model_name, result, True)
 
 if __name__ == '__main__':
     # profile.run('main()')

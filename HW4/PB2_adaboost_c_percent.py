@@ -11,12 +11,12 @@ target = 'vote'
 k = 10  # fold
 round_limit = 100
 if target == 'crx':
-    result_path = 'results/crxBoosting_cPercent_1.acc'
+    result_path = 'results/crxBoosting_cPercent_final.acc'
     model_name = 'crx_' + str(k) + 'fold'
     threshes_path = 'data/crx.threshes'
     data_path = 'data/crx_parsed.data'
 else:
-    result_path = 'results/voteBoosting_1.acc'
+    result_path = 'results/voteBoosting_cPercent_final.acc'
     model_name = 'vote_' + str(k) + 'fold'
     threshes_path = 'data/vote.threshes'
     data_path = 'data/vote_parsed.data'
@@ -34,11 +34,11 @@ auc_by_percent = {}
 roc = []
 auc = 0.0
 k_folds = Preprocess.prepare_k_folds(training_data, k)
-
+percent_list = (5, 10, 15, 20, 30, 50, 80)
 for i in range(k):
     tr_data_all, te_data = Preprocess.get_i_fold(k_folds, i)
 
-    for c in (5, 10, 15, 20, 30, 50, 80):
+    for c in percent_list:
         if c not in training_errs_by_percent.keys():
             training_errs_by_percent[c] = []
             testing_errs_by_percent[c] = []
@@ -94,20 +94,24 @@ for i in range(k):
 
 mean_training_err = {}
 mean_testing_err = {}
+mean_auc = {}
 for c_k in training_errs_by_percent.keys():
     mean_training_err[c_k] = np.mean(training_errs_by_percent[c_k])
     mean_testing_err[c_k] = np.mean(testing_errs_by_percent[c_k])
+    mean_auc[c_k] = np.mean(auc_by_percent[c_k])
 
 print(str(k) + '-fold validation done. Training errs are:')
-print(training_errs_by_percent)
-print('Mean training err is:')
-print(mean_training_err)
-print('Testing errs are:')
-print(testing_errs_by_percent)
-print('Mean testing err is:')
-print(mean_testing_err)
-print('Testing auc are:')
-print(auc_by_percent)
+for cc in percent_list:
+    print('c%={}%, train error: {:.3f}, test error: {:.3f}, AUC: {:.3f}'.format(cc, mean_training_err[cc], mean_testing_err[cc], mean_auc[cc]))
+# print(training_errs_by_percent)
+# print('Mean training err is:')
+# print(mean_training_err)
+# print('Testing errs are:')
+# print(testing_errs_by_percent)
+# print('Mean testing err is:')
+# print(mean_testing_err)
+# print('Testing auc are:')
+# print(auc_by_percent)
 
 result = {}
 result['Fold'] = str(k)

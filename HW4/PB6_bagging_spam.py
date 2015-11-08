@@ -10,7 +10,7 @@ import Bagging as b
 k = 10  # fold
 layer_thresh = 2
 T = 50
-result_path = 'results/spamDTBagging_1.acc'
+result_path = 'results/spamDTBagging_final.acc'
 model_name = 'spam_' + str(k) + 'fold'
 threshes_path = 'data/spambase.threshes'
 
@@ -27,7 +27,7 @@ roc = []
 auc = 0.0
 k_folds = Preprocess.prepare_k_folds(training_data, k)
 
-for i in range(k):
+for i in range(1):
     tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
     tr_n, f_d = np.shape(tr_data[0])
     te_n, = np.shape(te_data[1])
@@ -61,16 +61,16 @@ print('Mean testing err is:')
 print(mean_testing_err)
 
 result = {}
-result['Fold'] = str(k)
-result['Trainingerrs'] = str(training_errs)
-result['MeanTrainingAcc'] = str(mean_training_err)
-result['Testingerrs'] = str(testing_errs)
-result['MeanTestingAcc'] = str(mean_testing_err)
+result['Fold'] = k
+result['Trainingerrs'] = training_errs
+result['MeanTrainingAcc'] = mean_training_err
+result['Testingerrs'] = testing_errs
+result['MeanTestingAcc'] = mean_testing_err
 
-result['ROC'] = str(roc)
-result['AUC'] = str(auc)
+result['ROC'] = roc
+result['AUC'] = auc
 
 
 
 # log the training result to file
-util.write_result_to_file(result_path, model_name, result)
+util.write_result_to_file(result_path, model_name, result, True)

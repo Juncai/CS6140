@@ -22,8 +22,10 @@ class DecisionStump(Model.Model):
             if not isinstance(self.thresh, tuple):
                 return 1 if feature[self.f_ind] >= self.thresh else -1
             else:
-                return 1 if feature[self.f_ind] == self.thresh[1] else -1
-
+                if self.thresh[0]:
+                    return 1 if feature[self.f_ind] == self.thresh[1] else -1
+                else:
+                    return 1 if feature[self.f_ind] >= self.thresh[1] else -1
     def train(self, features, label, d, threshes, thresh_cs):
         self.f_ind, self.t_ind, self.thresh, self.w_err = self._split_on_err(features, label, d, threshes, thresh_cs)
 

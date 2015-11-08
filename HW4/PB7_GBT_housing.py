@@ -10,7 +10,7 @@ import copy
 # training parameter
 layer_thresh = 2
 R = 10
-result_path = 'results/housingGBT_1.err'
+result_path = 'results/housingGBT_final.err'
 model_name = 'housingGBT'
 threshes_path = 'data/housing_train.threshes'
 
@@ -35,7 +35,6 @@ while round <= R:
 
     # training error is from newly added tree, testing error is from current GBT
     pred = gbt.trees[-1].batch_predict(tr_data[0])
-    # training_errs.append(util.mse(pred, gbt_label))
     training_errs.append(gbt.test(tr_data[0], tr_data[1], util.mse))
     testing_errs.append(gbt.test(te_data[0], te_data[1], util.mse))
 
@@ -59,10 +58,10 @@ mean_testing_err = np.mean(testing_errs)
 print('Final testing err is: {}'.format(testing_errs[-1]))
 
 result = {}
-result['Trainingerrs'] = str(training_errs)
-result['MeanTrainingAcc'] = str(mean_training_err)
-result['Testingerrs'] = str(testing_errs)
-result['MeanTestingAcc'] = str(mean_testing_err)
+result['Trainingerrs'] = training_errs
+result['MeanTrainingAcc'] = mean_training_err
+result['Testingerrs'] = testing_errs
+result['MeanTestingAcc'] = mean_testing_err
 
 # log the training result to file
-util.write_result_to_file(result_path, model_name, result)
+util.write_result_to_file(result_path, model_name, result, True)

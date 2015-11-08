@@ -7,18 +7,18 @@ import Boosting as b
 
 def main():
     # training parameter
-    # target = 'crx'
-    target = 'vote'
+    target = 'crx'
+    # target = 'vote'
     k = 10  # fold
-    round_limit = 100
+    round_limit = 150
 
     if target == 'crx':
-        result_path = 'results/crxBoosting_1.acc'
+        result_path = 'results/crxBoosting_final.acc'
         model_name = 'crx_' + str(k) + 'fold'
         threshes_path = 'data/crx.threshes'
         data_path = 'data/crx_parsed.data'
     else:
-        result_path = 'results/voteBoosting_1.acc'
+        result_path = 'results/voteBoosting_final.acc'
         model_name = 'vote_' + str(k) + 'fold'
         threshes_path = 'data/vote.threshes'
         data_path = 'data/vote_parsed.data'
