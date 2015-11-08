@@ -12,9 +12,12 @@ import os.path as path
 import copy
 import time
 
+# wl_type = 'random_'
+wl_type = ''
+
 # training parameter
-result_path = 'results/8newsgroupECOC_cs_2.acc'
-model_name = '8newsgroupECOC_cs_2'
+result_path = 'results/8newsgroupECOC_cs_' + wl_type + 'final.acc'
+model_name = '8newsgroupECOC_cs_' + wl_type + 'final'
 model_path = 'results/8newsgroup/' + model_name + '.model'
 threshes_path = 'data/8newsgroup/8newsgroup.thresh'
 tr_data_path = 'data/8newsgroup/train.data'
@@ -22,8 +25,10 @@ te_data_path = 'data/8newsgroup/test.data'
 ecoc_path = 'data/8newsgroup/ecoc_cs'
 
 # specify weak learner
-# wl = ds.RandomDecisionStump
-wl = ds.DecisionStump
+if wl_type == 'random_':
+    wl = ds.RandomDecisionStump
+else :
+    wl = ds.DecisionStump
 
 # laod and preprocess training data
 tr_data = loader.load_pickle_file(tr_data_path)
@@ -83,8 +88,8 @@ print('Init ecoc done!')
 print('Begin training...')
 boosts = []
 function_tr_err = []
-max_round = 5
-tr_predict_cs = []
+max_round = 50
+# tr_predict_cs = []
 
 for ind, c_ecoc in enumerate(best_ecoc[1]):
     print('Training function {}...'.format(ind))
@@ -129,8 +134,9 @@ for ind, c_ecoc in enumerate(best_ecoc[1]):
         print('Round: {} Feature: {} Threshold: {} Round_err: {:.12f} Train_err: {:.12f} Test_err {} AUC {}'.format(round, c_f_ind, c_thresh, c_model_err, c_tr_err, 0, 0))
         if c_tr_err == 0:
             break
-    tr_predict_cs.append(training_predict)
-    function_tr_err.append(boost.test(tr_data[0], bin_label, util.acc))
+    # tr_predict_cs.append(training_predict)
+    # function_tr_err.append(boost.test(tr_data[0], bin_label, util.acc))
+    function_tr_err.append(c_tr_err)
     boosts.append(boost)
 
 print('Training done.')
@@ -146,14 +152,14 @@ print('Training err for each function: ')
 print(str(function_tr_err))
 
 result = {}
-result['Testingerr'] = str(test_err)
-result['Trainingerr'] = str(train_err)
-result['RoundTrainingData'] = str(function_tr_err)
-result['ECOC'] = str(best_ecoc[2])
+result['Testingerr'] = test_err
+result['Trainingerr'] = train_err
+result['RoundTrainingData'] = function_tr_err
+result['ECOC'] = best_ecoc[2]
 
 # save the model
 with open(model_path, 'wb+') as f:
     pickle.dump(boosts, f)
 
 # log the training result to file
-util.write_result_to_file(result_path, model_name, result)
+util.write_result_to_file(result_path, model_name, result, True)
