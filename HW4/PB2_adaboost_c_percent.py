@@ -11,12 +11,12 @@ target = 'vote'
 k = 10  # fold
 round_limit = 100
 if target == 'crx':
-    result_path = 'results/crxBoosting_cPercent_final.acc'
+    result_path = 'results/crxBoosting_cPercent_final_1.acc'
     model_name = 'crx_' + str(k) + 'fold'
     threshes_path = 'data/crx.threshes'
     data_path = 'data/crx_parsed.data'
 else:
-    result_path = 'results/voteBoosting_cPercent_final.acc'
+    result_path = 'results/voteBoosting_cPercent_final_1.acc'
     model_name = 'vote_' + str(k) + 'fold'
     threshes_path = 'data/vote.threshes'
     data_path = 'data/vote_parsed.data'

@@ -20,9 +20,9 @@ class Tree():
         Comsume a tree model and datapoints
         Return the predictions
         '''
-        return [self.single_predict(x) for x in features]
+        return [self.predict(x) for x in features]
 
-    def single_predict(self, feature):
+    def predict(self, feature):
         '''
         Comsume a tree model and a single datapoint
         Return the prediction

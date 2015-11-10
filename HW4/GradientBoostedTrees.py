@@ -24,7 +24,7 @@ class GradientBoostedTrees():
         T = len(self.trees)
         res = 0.
         for i in range(T):
-            pred = self.trees[i].single_predict(feature)
+            pred = self.trees[i].predict(feature)
             res += pred
         return res
 

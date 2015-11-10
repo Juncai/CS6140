@@ -13,7 +13,7 @@ def main():
     round_limit = 150
 
     if target == 'crx':
-        result_path = 'results/crxBoosting_final.acc'
+        result_path = 'results/crxBoosting_final_1.acc'
         model_name = 'crx_' + str(k) + 'fold'
         threshes_path = 'data/crx.threshes'
         data_path = 'data/crx_parsed.data'

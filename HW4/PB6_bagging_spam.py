@@ -5,12 +5,13 @@ import Preprocess
 import numpy as np
 import Utilities as util
 import Bagging as b
+import time
 
 # training parameter
 k = 10  # fold
 layer_thresh = 2
 T = 50
-result_path = 'results/spamDTBagging_final.acc'
+result_path = 'results/spamDTBagging_final_1.acc'
 model_name = 'spam_' + str(k) + 'fold'
 threshes_path = 'data/spambase.threshes'
 
@@ -34,13 +35,15 @@ for i in range(1):
     round = 0
     bagging = b.Bagging()
     while round < T:
+        st = time.time()
         # prepare training data
         round += 1
         b_tr_data = util.get_bagging_data(tr_data, tr_n)
         bagging.add_tree(b_tr_data[0], b_tr_data[1], threshes, layer_thresh)
         r_tr_acc = bagging.trees[-1].test(b_tr_data[0], b_tr_data[1], util.acc)
         r_te_acc = bagging.test(te_data[0], te_data[1], util.acc)
-        print('Round {} with training error: {}, testing error: {}.'.format(round, r_tr_acc, r_te_acc))
+        print('Round {} time used: {}'.format(round, time.time() - st))
+        print('Round {} with training acc: {}, testing acc: {}.'.format(round, r_tr_acc, r_te_acc))
 
     # test the bagging model and compute testing acc
     training_errs.append(bagging.test(tr_data[0], tr_data[1], util.acc))

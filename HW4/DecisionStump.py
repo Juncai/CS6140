@@ -92,6 +92,26 @@ class DecisionStump(Model.Model):
                     best_res = (t_k, t_ind, t, w_err)
         return best_res
 
+    # def _split_on_err_uniform_v4(self, features, label, d, threshes, thresh_cs):
+    #     best_res = None
+    #     max = 0     # max value of 1/2-error(h)
+    #
+    #     # calculate weighted errors for other thresholds
+    #     for t_k in threshes.keys():
+    #         for t_val in threshes[t_k][0]:
+    #             w_err =
+    #             for f_i in threshes[t_k][1]:
+    #
+    #
+    #
+    #         for j, t_cs in enumerate(thresh_cs[t_k]):
+    #                 w_err = np.dot(t_cs, d)
+    #                 err_d = abs(0.5 - w_err)
+    #                 if err_d > max:
+    #                     max = err_d
+    #                     best_res = (t_k, j, threshes[t_k][j], w_err)
+    #     return best_res
+
     def _split_on_err_uniform_v3(self, features, label, d, threshes, thresh_cs):
         best_res = None
         max = 0     # max value of 1/2-error(h)

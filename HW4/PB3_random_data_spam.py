@@ -10,7 +10,7 @@ import DataSet
 def main():
     # training parameter
     round_limit = 50
-    result_path = 'results/spamActive_random_final.acc'
+    result_path = 'results/spamActive_random_final_1.acc'
     model_name = 'spam_active'
     threshes_path = 'data/spambase.threshes'
 

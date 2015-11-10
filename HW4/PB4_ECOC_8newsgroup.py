@@ -16,10 +16,11 @@ import time
 wl_type = ''
 
 # training parameter
-result_path = 'results/8newsgroupECOC_cs_' + wl_type + 'final.acc'
+result_path = 'results/8newsgroupECOC_cs_' + wl_type + 'final_1.acc'
 model_name = '8newsgroupECOC_cs_' + wl_type + 'final'
 model_path = 'results/8newsgroup/' + model_name + '.model'
 threshes_path = 'data/8newsgroup/8newsgroup.thresh'
+threshes_path_v2 = 'data/8newsgroup/8newsgroup_f_i.thresh'
 tr_data_path = 'data/8newsgroup/train.data'
 te_data_path = 'data/8newsgroup/test.data'
 ecoc_path = 'data/8newsgroup/ecoc_cs'
@@ -36,6 +37,7 @@ te_data= loader.load_pickle_file(te_data_path)
 
 # load thresholds
 threshes = loader.load_pickle_file(threshes_path)
+# threshes_v2 = loader.load_pickle_file(threshes_path_v2)
 
 # start training
 tr_n = len(tr_data[0])
@@ -88,12 +90,13 @@ print('Init ecoc done!')
 print('Begin training...')
 boosts = []
 function_tr_err = []
+
 max_round = 50
-# tr_predict_cs = []
+if wl_type == 'random_':
+    max_round = 2000
 
 for ind, c_ecoc in enumerate(best_ecoc[1]):
     print('Training function {}...'.format(ind))
-    # TODO preprocess the labels
     # TODO preprocess labels, so that labels match ecoc, {0, 1} -> {-1, 1}
     bin_label = util.generate_bin_label_from_ecoc(tr_data[1], c_ecoc)
 
@@ -104,38 +107,23 @@ for ind, c_ecoc in enumerate(best_ecoc[1]):
         # TODO precompute thresholds cheat sheet
         thresh_cs = util.pre_compute_threshes_8news(tr_data[0], bin_label, threshes)
     boost = b.Boosting(d)
-    # testing_predict = np.zeros((1, te_n)).tolist()[0]
     training_predict = np.zeros((1, tr_n)).tolist()[0]
     round_tr_err = []
-    # round_te_err = []
-    # converged = False
-    # tol = 1e-5
-    # train_err = 2.
     round = 0
     while round < max_round:
         st = time.time() # start ts
         round += 1
-        # boost.add_model(ds.DecisionStump, tr_data[0], bin_label, threshes, thresh_cs, True)
         boost.add_model(wl, tr_data[0], bin_label, threshes, thresh_cs, True)
         boost.update_predict(tr_data[0], training_predict)
-        # boost.update_predict(te_data[0], testing_predict)
         c_model_err = boost.model[-1].w_err
-        # print("Prediction 1: {}".format(testing_predict[0]))
         c_tr_err = util.get_err_from_predict(training_predict, bin_label)
         round_tr_err.append(c_tr_err)
-        # c_te_err = util.get_err_from_predict(testing_predict, te_data[1])
-        # print("Model {} Round testing error: {}".format(round, c_te_err))
-        # round_te_err.append(c_te_err)
-        # converged =  c_tr_err / train_err > 1 - tol
-        # train_err = c_tr_err
         c_f_ind = boost.model[-1].f_ind
         c_thresh = boost.model[-1].thresh
         print('Time used: {}'.format(time.time() - st))
         print('Round: {} Feature: {} Threshold: {} Round_err: {:.12f} Train_err: {:.12f} Test_err {} AUC {}'.format(round, c_f_ind, c_thresh, c_model_err, c_tr_err, 0, 0))
         if c_tr_err == 0:
             break
-    # tr_predict_cs.append(training_predict)
-    # function_tr_err.append(boost.test(tr_data[0], bin_label, util.acc))
     function_tr_err.append(c_tr_err)
     boosts.append(boost)
 
