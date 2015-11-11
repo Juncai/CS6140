@@ -91,7 +91,7 @@ print('Begin training...')
 boosts = []
 function_tr_err = []
 
-max_round = 50
+max_round = 100
 if wl_type == 'random_':
     max_round = 2000
 
