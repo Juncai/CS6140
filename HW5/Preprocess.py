@@ -108,9 +108,11 @@ def prepare_k_folds(dataset, k):
         i_fold = [[], []]
         j = i
         while j < cnt:
-            i_fold[0].append(features[j])
+            i_fold[0].append(features[j].tolist())
             i_fold[1].append(label[j])
             j += k
+        i_fold[0] = np.array(i_fold[0])
+        i_fold[1] = np.array(i_fold[1])
         k_folds.append(i_fold)
     return k_folds
 
@@ -127,8 +129,10 @@ def get_i_fold(k_folds, ind):
 
     for i, f in enumerate(k_folds):
         if i != ind:
-            training_data[0] += f[0]
-            training_data[1] += f[1]
+            training_data[0] += f[0].tolist()
+            training_data[1] += f[1].tolist()
+    training_data[0] = np.array(training_data[0])
+    training_data[1] = np.array(training_data[1])
     return training_data, testing_data
 
 def get_c_percent(c, ds):

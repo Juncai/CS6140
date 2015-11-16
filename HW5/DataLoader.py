@@ -163,7 +163,7 @@ def load_label(path, number=True):
     with open(path, 'r') as f:
         for line in f:
             label.append(float(line) if number else line)
-    return label
+    return np.array(label)
 
 def load_dataset(path, has_label=True):
     '''
@@ -181,6 +181,6 @@ def load_dataset(path, has_label=True):
     if has_label:
         label = [x[-1] for x in data_set]
         features = [x[:-1] for x in data_set]
-        return [features, label]
+        return [np.array(features), np.array(label)]
     else:
         return data_set

@@ -322,7 +322,7 @@ def get_err_from_predict(pred, label):
     # return err / n
 
 def replace_zero_label_with_neg_one(data):
-    data[1] = [-1 if l == 0 else l for l in data[1]]
+    data[1] = np.array([-1 if l == 0 else l for l in data[1]])
 
 def init_distribution(n):
     d = np.ones((1,n)) / n

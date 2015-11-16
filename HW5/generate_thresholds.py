@@ -92,7 +92,8 @@ def generate_thresholds(features, thresh_path, meta_f=None):
                 threshes.append((False, cur_threshes))
     else:
         for i in range(d):
-            cur_f = [x[i] for x in features]
+            # cur_f = [x[i] for x in features]
+            cur_f = features[:, i]
             cur_threshes = sorted_unique_values(cur_f)
             threshes.append(cur_threshes)
 
@@ -101,8 +102,8 @@ def generate_thresholds(features, thresh_path, meta_f=None):
     return threshes
 
 def sorted_unique_values(feature):
-    cur_max = np.max(feature)
-    cur_min = np.min(feature)
+    cur_max = feature.max()
+    cur_min = feature.min()
     uniq_vals = np.unique(feature)
     cur_threshes = [cur_min - 0.1,] # add a threshold below all the values
     for j in range(len(uniq_vals) - 1):
@@ -120,14 +121,14 @@ if __name__ == '__main__':
     # loader.save(data_save_path, data)
 
     # generate thresholds for spambase polluted train data
-    # data_path = 'data/spam_polluted/train/data.pickle'
-    # features_path = 'data/spam_polluted/train/train_feature.txt'
-    # thresh_path = 'data/spambase_polluted.threshes'
-    # label_path = 'data/spam_polluted/train/train_label.txt'
-    # features = loader.load_dataset(features_path, False)
-    # # generate_thresholds(features, thresh_path)
-    # label = loader.load_label(label_path)
-    # loader.save(data_path, [features, label])
+    data_path = 'data/spam_polluted/train/data.pickle'
+    features_path = 'data/spam_polluted/train/train_feature.txt'
+    thresh_path = 'data/spambase_polluted.threshes'
+    label_path = 'data/spam_polluted/train/train_label.txt'
+    features = loader.load_dataset(features_path, False)
+    generate_thresholds(features, thresh_path)
+    label = loader.load_label(label_path)
+    loader.save(data_path, [features, label])
 
     # load and save spam polluted test data
     # data_save_path = 'data/spam_polluted/test/data.pickle'
@@ -144,11 +145,10 @@ if __name__ == '__main__':
     # loader.save(data_save_path, data)
 
     # load and save spam polluted missing train data
-    data_save_path = 'data/spam_polluted_missing/train/data.pickle'
-    data_path = 'data/spam_polluted_missing/train/20_percent_missing_train.txt'
-    data = loader.load_dataset(data_path)
-    loader.save(data_save_path, data)
-
+    # data_save_path = 'data/spam_polluted_missing/train/data.pickle'
+    # data_path = 'data/spam_polluted_missing/train/20_percent_missing_train.txt'
+    # data = loader.load_dataset(data_path)
+    # loader.save(data_save_path, data)
 
 
     # generate thresholds for crx

@@ -94,7 +94,7 @@ def main():
 
     print('Final results. Mean Train err: {}, Mean Test err: {}'.format(mean_training_err, mean_testing_err))
     print('Top 10 features: ')
-    # print(ranked_f[:10])
+    print(ranked_f[:10])
 
     result = {}
     result['Fold'] = k
