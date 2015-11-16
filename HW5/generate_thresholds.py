@@ -103,12 +103,12 @@ def generate_thresholds(features, thresh_path, meta_f=None):
 def sorted_unique_values(feature):
     cur_max = np.max(feature)
     cur_min = np.min(feature)
-    uniq_vals = np.unique(feature).tolist()
+    uniq_vals = np.unique(feature)
     cur_threshes = [cur_min - 0.1,] # add a threshold below all the values
     for j in range(len(uniq_vals) - 1):
         cur_threshes.append(np.mean(uniq_vals[j:j+2]))
     cur_threshes.append(cur_max + 0.1)  # add a threshold above all the values
-    return cur_threshes
+    return np.array(cur_threshes)
 
 if __name__ == '__main__':
     # generate thresholds for spambase

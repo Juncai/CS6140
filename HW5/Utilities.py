@@ -61,7 +61,7 @@ def generate_bin_label_from_ecoc(label, ecoc):
     for j, l in enumerate(bin_label):
         bin_label[j] = 1 if l in pos_ind else -1
 
-    return bin_label
+    return np.array(bin_label)
 
 def ecoc_test(features, label, boosts, ecoc):
     pred = ecoc_prediction(features, boosts, ecoc)
@@ -145,9 +145,10 @@ def pre_compute_threshes(features, label, threshes):
     '''
     threshes_cheatsheet = []
     n, dim = np.shape(features)
-    label_plus_one = np.array(label) + 1
+    label_plus_one = label + 1
     for i in range(dim):
-        cur_f = np.array([x[i] for x in features])
+        # cur_f = np.array([x[i] for x in features])
+        cur_f = features[:, i]
 
         # sorted(cur_f, key= lambda x: x[0])
         c_cs = []
@@ -325,7 +326,7 @@ def replace_zero_label_with_neg_one(data):
 
 def init_distribution(n):
     d = np.ones((1,n)) / n
-    return d.tolist()[0]
+    return d[0]
 
 def acc_stable(theta, features, label, last_n_accs, thresh):
     x = [[1] + f for f in features]

@@ -81,7 +81,7 @@ class Boosting():
         # TODO calculate Zt
         zt = math.fsum(self.d)
         # update distribution
-        self.d = (np.array(self.d) / zt).tolist()
+        self.d = self.d / zt
 
     def update_d_cs(self, thresh_cs, model, a):
         for i in range(len(self.d)):
@@ -90,4 +90,4 @@ class Boosting():
         # TODO calculate Zt
         zt = math.fsum(self.d)
         # update distribution
-        self.d = (np.array(self.d) / zt).tolist()
+        self.d = self.d / zt

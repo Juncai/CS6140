@@ -34,6 +34,10 @@ else :
 tr_data = loader.load_pickle_file(tr_data_path)
 te_data= loader.load_pickle_file(te_data_path)
 
+# transpose label
+tr_data[1] = np.transpose(tr_data[1])[0]
+te_data[1] = np.transpose(te_data[1])[0]
+
 # load thresholds
 threshes = loader.load_pickle_file(threshes_path)
 

@@ -37,7 +37,7 @@ def abstract_features(data_path, cs_path, rects_path, res_path):
 
     # combine with labels
     label = loader.load_pickle_file(data_path)[1]
-    f_l = [features, label]
+    f_l = [np.array(features), label]
     loader.save(res_path, f_l)
 
     return f_l
@@ -106,7 +106,7 @@ def dp_compute_cs_helper(image):
     for i in range(1, len(image)):
         for j in range(1, len(image[0])):
             cur_cs[i][j] = cur_cs[i][j-1] + cur_cs[i-1][j] - cur_cs[i-1][j-1] + (1 if image[i][j] > 0 else 0)
-    return cur_cs.tolist()
+    return cur_cs
 
 def random_select_rectangle(h, w, n, pl, ph, save_path=None):
     '''
@@ -135,6 +135,15 @@ def random_select_rectangle(h, w, n, pl, ph, save_path=None):
 def rect_area(p1, p2):
     return (abs(p2[0] - p1[0]) + 1) * (abs(p2[1] - p1[1]) + 1)
 
+
+def convert_to_np_array(path):
+    data = loader.load_pickle_file(path)
+    # convert labels
+    np_label = np.array(data[1])
+    np_features = np.array(data[0])
+    loader.save(path, [np_features, np_label])
+
+
 if __name__ == '__main__':
     tr_save_path = 'data\\digits\\tr_data.pickle'
     te_save_path = 'data\\digits\\te_data.pickle'
@@ -149,10 +158,11 @@ if __name__ == '__main__':
 
     # randomly pick 20 percent of the training data
     # random_select_data(tr_save_path, sel_tr_save_path, percent)
+    # convert_to_np_array(sel_tr_save_path)
 
     # pre compute the cheatsheet
-    # get_cs(te_save_path, te_cs_save_path)
     # get_cs(sel_tr_save_path, sel_tr_cs_save_path)
+    # get_cs(te_save_path, te_cs_save_path)
 
     # randomly pick 100 rectangles
     # random_select_rectangle(28, 28, 100, 140, 170, rects_path)
@@ -160,5 +170,8 @@ if __name__ == '__main__':
     # abstract_features(te_save_path, te_cs_save_path, rects_path, te_f_l_path)
 
     # generate thresholds
-    data = loader.load_pickle_file(tr_f_l_path)
-    gt.generate_thresholds(data[0], thresh_path)
+    # data = loader.load_pickle_file(tr_f_l_path)
+    # gt.generate_thresholds(data[0], thresh_path)
+
+    tmp = loader.load_pickle_file(tr_f_l_path)
+    print('done')
