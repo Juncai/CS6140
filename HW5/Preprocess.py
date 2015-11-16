@@ -58,10 +58,8 @@ def normalize_features_all(method, train_ds, test_ds=None, not_norm=()):
     '''
     Apply given normalize method to all of the feature columns
     '''
-    if method is None:
-        return
     cur_ds = train_ds
-    if test_ds:
+    if test_ds is not None:
         cur_ds = train_ds + test_ds
 
 

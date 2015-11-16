@@ -5,6 +5,23 @@ from scipy.spatial.distance import hamming
 import copy
 import pickle
 import Boosting as b
+import random as prandom
+
+
+def choice(n, k):
+    '''
+    Get k samples from the range(0, n) without replacement
+    :param n: integer
+    :param k: integer
+    :return: list of numbers
+    '''
+    res = []
+    for i in range(k):
+        cur_s = prandom.randint(0, n-1)
+        while cur_s in res:
+            cur_s = prandom.randint(0, n-1)
+        res.append(cur_s)
+    return res
 
 
 def get_f_ranking_from_predictions(boost, threshes):
@@ -434,3 +451,63 @@ def mse(predictions, labels):
         return 0
     errs = np.array(predictions) - labels
     return sum(errs ** 2) / len(labels)
+
+
+def acc_higher_than(theta, features, label, thresh, acc_count):
+    '''
+    Return True if the accuracy is higher than or equal to the threshold, False otherwise
+    '''
+    x = [[1] + f for f in features]
+    x = np.array(x)
+    y = np.dot(x, theta)
+    y = [yy[0] for yy in y]
+    label = [l[0] for l in label]
+    cur_acc = acc(y, label)
+    cur_mse = mse(y, label)
+    if acc_count[0] == cur_acc:
+        acc_count[1] = acc_count[1] + 1
+    else:
+        acc_count[0] = cur_acc
+        acc_count[1] = 1
+    print('acc: {}, mse: {}'.format(cur_acc, cur_mse))
+    return cur_acc >= thresh or acc_count[1] >= 100
+
+def acc_higher_than_ridge(theta, features, label, thresh, acc_count):
+    '''
+    Return True if the accuracy is higher than or equal to the threshold, False otherwise
+    '''
+    x = [[1] + f for f in features]
+    x = np.array(x)
+    # y = np.dot(x, theta)
+    y = logistic_fun_batch(theta, x)
+    y = [yy[0] for yy in y]
+    label = [l[0] for l in label]
+    cur_acc = acc(y, label)
+    cur_mse = mse(y, label)
+    if acc_count[0] == cur_acc:
+        acc_count[1] = acc_count[1] + 1
+    else:
+        acc_count[0] = cur_acc
+        acc_count[1] = 1
+    print('acc: {}, mse: {}'.format(cur_acc, cur_mse))
+    return cur_acc >= thresh or acc_count[1] >= 100
+
+
+def logistic_fun_batch(theta, features):
+    '''
+    Perform logistic regression calculation
+    :param theta:
+    :param features:
+    :return:
+    '''
+    y = []
+    for x in features:
+        tmp = logistic_fun(theta, x)
+        y.append([tmp])
+    return y
+
+def logistic_fun(theta, x):
+    # x = x.tolist()
+    # x = [1] + x
+    wx = np.dot(x, theta)[0]
+    return 1.0 / (1 + np.exp(-wx))

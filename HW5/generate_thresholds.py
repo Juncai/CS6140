@@ -130,12 +130,26 @@ if __name__ == '__main__':
     # loader.save(data_path, [features, label])
 
     # load and save spam polluted test data
-    data_save_path = 'data/spam_polluted/test/data.pickle'
-    features_path = 'data/spam_polluted/test/test_feature.txt'
-    label_path = 'data/spam_polluted/test/test_label.txt'
-    features = loader.load_dataset(features_path, False)
-    label = loader.load_label(label_path)
-    loader.save(data_save_path, [features, label])
+    # data_save_path = 'data/spam_polluted/test/data.pickle'
+    # features_path = 'data/spam_polluted/test/test_feature.txt'
+    # label_path = 'data/spam_polluted/test/test_label.txt'
+    # features = loader.load_dataset(features_path, False)
+    # label = loader.load_label(label_path)
+    # loader.save(data_save_path, [features, label])
+
+    # load and save spam polluted missing test data
+    # data_save_path = 'data/spam_polluted_missing/test/data.pickle'
+    # data_path = 'data/spam_polluted_missing/test/20_percent_missing_test.txt'
+    # data = loader.load_dataset(data_path)
+    # loader.save(data_save_path, data)
+
+    # load and save spam polluted missing train data
+    data_save_path = 'data/spam_polluted_missing/train/data.pickle'
+    data_path = 'data/spam_polluted_missing/train/20_percent_missing_train.txt'
+    data = loader.load_dataset(data_path)
+    loader.save(data_save_path, data)
+
+
 
     # generate thresholds for crx
     # data_path = 'data/crx_parsed.data'
@@ -153,8 +167,3 @@ if __name__ == '__main__':
     # config = loader.parse_UCI_config(config_path)
     # generate_thresholds(data[0], thresh_path, config[2])
 
-    # generate thresholds for housing test data
-    # data_path = 'data/housing_train.txt'
-    # thresh_path = 'data/housing_train.threshes'
-    # data = loader.load_dataset(data_path)
-    # generate_thresholds(data[0], thresh_path)
