@@ -159,9 +159,10 @@ class NB(Model):
     def _get_prior(self, labels):
         count = len(labels)
         y_pos_cnt = 0.
-        for y in labels:
-            if y == 1.0:
-                y_pos_cnt += 1
+        y_pos_cnt = labels.sum()
+        # for y in labels:
+        #     if y == 1.0:
+        #         y_pos_cnt += 1
         return [y_pos_cnt / count, 1 - (y_pos_cnt / count)]
 
     def _get_laplace_est(self, cnt1, cnt2):
@@ -192,7 +193,7 @@ class NBBernoulli(NB):
 
             for j in range(n):
                 val = features[j][i]
-                if not math.isnan(val):
+                if not np.isnan(val):
                     if val > self.means[i]:
                         if labels[j] == 1:
                             pos_spam_cnt += 1
@@ -230,7 +231,7 @@ class NBGaussian(NB):
                 else:
                     non_spam_dp.append(features[j][i])
             spam_e = np.mean(spam_dp)
-            overall_std = np.std([ff[i] for ff in features])
+            overall_std = np.std(features[:, i])
             # spam_std = np.std(spam_dp)
             non_spam_e = np.mean(non_spam_dp)
             # non_spam_std = np.std(non_spam_dp)

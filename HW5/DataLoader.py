@@ -162,7 +162,7 @@ def load_label(path, number=True):
     label = []
     with open(path, 'r') as f:
         for line in f:
-            label.append(float(line) if number else line)
+            label.append(float(line) if number else np.NAN)
     return np.array(label)
 
 def load_dataset(path, has_label=True):
