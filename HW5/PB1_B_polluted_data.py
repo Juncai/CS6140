@@ -11,9 +11,10 @@ import time
 def main():
     st = time.time()
     # training parameter
-    round_limit = 100
-    result_path = 'results/PB1_B_spam.acc'
+    round_limit = 15
+    result_path = 'results/PB1_B_spam_2.acc'
     model_name = 'spam_'
+    model_path = result_path + '.model'
     threshes_path = 'data/spambase_polluted.threshes'
     train_data_path = 'data/spam_polluted/train/data.pickle'
     test_data_path = 'data/spam_polluted/test/data.pickle'
@@ -118,6 +119,8 @@ def main():
     # result['ROC'] = str(roc)
     result['AUC'] = auc
 
+    # store the model
+    loader.save(model_path, boost)
     # log the training result to file
     util.write_result_to_file(result_path, model_name, result, True)
 
