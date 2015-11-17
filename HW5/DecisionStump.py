@@ -32,8 +32,11 @@ class DecisionStump(Model.Model):
     def _split_on_err(self, features, label, d, threshes, thresh_cs):
         if self.is_uniform:
             return self._split_on_err_uniform_v3(features, label, d, threshes, thresh_cs)
+        elif thresh_cs is None:
+            return self._split_on_err_no_cs(features, label, d, threshes)
         else:
             return self._split_on_err_normal(features, label, d, threshes, thresh_cs)
+
 
 
     def _split_on_err_uniform_re_v2(self, features, label, d, threshes, thresh_cs):
@@ -150,6 +153,29 @@ class DecisionStump(Model.Model):
                 if err_d > max:
                     max = err_d
                     best_res = (t_k, t_ind, t, w_err)
+        return best_res
+
+    def _split_on_err_no_cs(self, features, label, d, threshes):
+        # TODO need to handle the discrete features
+        '''
+        Find the best pair based on IG
+        Return: feature index, threshold, left predict, right predict
+        '''
+        n, f_n = np.shape(features)
+        best_res = None
+        max = 0 # max value of 1/2-error(h)
+        label_plus_one = label + 1
+
+        for i in range(f_n):
+            cur_f = features[:, i]
+            for j, t in enumerate(threshes[i]):
+                cur_r = np.sign(cur_f - t) + 1
+                cur_r = np.logical_xor(cur_r, label_plus_one)
+                w_err = np.dot(cur_r, d)
+                err_d = abs(0.5 - w_err)
+                if err_d > max:
+                    max = err_d
+                    best_res = (i, j, threshes[i][j], w_err)
         return best_res
 
 

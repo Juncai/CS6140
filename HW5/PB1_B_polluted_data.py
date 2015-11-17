@@ -41,14 +41,17 @@ def main():
     ranked_f = None
     roc = []
     auc = 0.0
+    thresh_cs = None
 
     tr_n, f_d = np.shape(tr_data[0])
     te_n, = np.shape(te_data[1])
     # TODO prepare distribution
     d = util.init_distribution(len(tr_data[0]))
-    # TODO compute thresholds cheat sheet
-    thresh_cs = util.pre_compute_threshes(tr_data[0], tr_data[1], threshes)
-    print('{:.2f} Thresholds cheat sheet computed!'.format(time.time() - st))
+
+    # TODO compute thresholds cheat sheet (not a solution due to huge thresh_cs table)
+    # thresh_cs = util.pre_compute_threshes(tr_data[0], tr_data[1], threshes)
+    # print('{:.2f} Thresholds cheat sheet computed!'.format(time.time() - st))
+
     boost = b.Boosting(d)
     testing_predict = np.zeros((1, te_n)).tolist()[0]
     training_predict = np.zeros((1, tr_n)).tolist()[0]
