@@ -6,14 +6,14 @@ import time
 
 st = time.time()
 # training parameter
-result_path = 'results/PB3_C_spam_polluted_LoR_myRIDGE.acc'
+result_path = 'results/PB3_C_spam_polluted_LoR_myRIDGE_final.acc'
 model_name = 'spam_'
 train_data_path = 'data/spam_polluted/train/data.pickle'
 test_data_path = 'data/spam_polluted/test/data.pickle'
 
 # params
 lamda = 0.0001
-tol = 0.95
+tol = 0.83
 normalize_method = prep.zero_mean_unit_var
 term_method = util.acc_higher_than_ridge
 

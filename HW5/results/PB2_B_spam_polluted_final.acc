@@ -1,0 +1,3 @@
+Model: spam_
+TrainingAcc 0.735024154589
+TestingAcc 0.726681127983

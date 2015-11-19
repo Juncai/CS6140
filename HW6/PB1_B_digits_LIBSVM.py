@@ -39,7 +39,7 @@ def main():
     # start training
     print('{} Start training.'.format(time.time() - st))
     # clf = svm.SVC(kernel='poly')
-    clf = svm.SVC(kernel='rbf')
+    clf = svm.SVC(C=0.5, kernel='rbf')
     # clf = svm.NuSVC(kernel='rbf')
     clf.fit(tr_data[0], tr_data[1])
     tr_pred = clf.predict(tr_data[0])

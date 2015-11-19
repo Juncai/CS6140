@@ -9,7 +9,7 @@ from sklearn.decomposition import PCA
 def main():
     st = time.time()
     # training parameter
-    result_path = 'results/PB2_B_spam_polluted.acc'
+    result_path = 'results/PB2_B_spam_polluted_final.acc'
     model_name = 'spam_'
     train_data_path = 'data/spam_polluted/train/data.pickle'
     test_data_path = 'data/spam_polluted/test/data.pickle'
@@ -32,17 +32,26 @@ def main():
     model = m.NBGaussian()
     model.build(tr_data[0], tr_data[1])
 
-    training_acc = model.test(tr_data[0], tr_data[1], util.acc)
+    print('{:.2f} Predicting...'.format(time.time() - st))
+    tr_pred = model.predict(tr_data[0])
+    te_pred = model.predict(te_data[0])
+
+    print('{:.2f} Calculating results...'.format(time.time() - st))
+    tr_acc = (tr_data[1] == tr_pred).sum() / tr_data[0].shape[0]
+    te_acc = (te_data[1] == te_pred).sum() / te_data[0].shape[0]
+
+
+    # training_acc = model.test(tr_data[0], tr_data[1], util.acc)
     # training_cms.append(training_test_res[1])
-    testing_acc = model.test(te_data[0], te_data[1], util.acc)
+    # testing_acc = model.test(te_data[0], te_data[1], util.acc)
     # testing_cms.append(testing_test_res[1])
 
 
-    print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, training_acc, testing_acc))
+    print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
 
     result = {}
-    result['TrainingAcc'] = training_acc
-    result['TestingAcc'] = testing_acc
+    result['TrainingAcc'] = tr_acc
+    result['TestingAcc'] = te_acc
 
     # log the training result to file
     util.write_result_to_file(result_path, model_name, result, True)

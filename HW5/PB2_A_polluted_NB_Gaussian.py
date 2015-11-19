@@ -18,6 +18,13 @@ def main():
     test_data_path = 'data/spam_polluted/test/data.pickle'
 
     # laod and preprocess training data
+    # data_path = 'data/spam/data.pickle'
+    # training_data = loader.load_pickle_file(data_path)
+    # k_folds = Preprocess.prepare_k_folds(training_data, 10)
+    #
+    # tr_data, te_data = Preprocess.get_i_fold(k_folds, 1)
+
+
     tr_data = loader.load_pickle_file(train_data_path)
     te_data = loader.load_pickle_file(test_data_path)
     print('{:.2f} Data loaded!'.format(time.time() - st))
@@ -30,14 +37,17 @@ def main():
     # print('{} Testing acc: {}'.format(time.time() - st, (te_data[1] != te_pred).sum() / te_data[0].shape[0]))
 
     # start training
+    print('{:.2f} Building model...'.format(time.time() - st))
     model = m.NBGaussian()
     model.build(tr_data[0], tr_data[1])
 
+    print('{:.2f} Predicting...'.format(time.time() - st))
     tr_pred = model.predict(tr_data[0])
     te_pred = model.predict(te_data[0])
 
-    tr_acc = (tr_data[1] != tr_pred).sum() / tr_data[0].shape[0]
-    te_acc = (te_data[1] != te_pred).sum() / te_data[0].shape[0]
+    print('{:.2f} Calculating results...'.format(time.time() - st))
+    tr_acc = (tr_data[1] == tr_pred).sum() / tr_data[0].shape[0]
+    te_acc = (te_data[1] == te_pred).sum() / te_data[0].shape[0]
 
 
     print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
