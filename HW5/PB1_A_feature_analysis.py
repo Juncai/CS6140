@@ -9,7 +9,7 @@ import profile
 def main():
     # training parameter
     k = 10  # fold
-    round_limit = 300
+    round_limit = 600
     result_path = 'results/PB1_A_spam.acc'
     model_name = 'spam_' + str(k) + 'fold'
     threshes_path = 'data/spambase.threshes'

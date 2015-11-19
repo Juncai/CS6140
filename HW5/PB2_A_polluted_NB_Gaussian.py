@@ -6,6 +6,8 @@ import Model as m
 import profile
 import time
 
+from sklearn.naive_bayes import GaussianNB
+
 
 def main():
     st = time.time()
@@ -20,21 +22,29 @@ def main():
     te_data = loader.load_pickle_file(test_data_path)
     print('{:.2f} Data loaded!'.format(time.time() - st))
 
+    # training with sklearn
+    # gnb = GaussianNB()
+    # tr_pred = gnb.fit(tr_data[0], tr_data[1]).predict(tr_data[0])
+    # print('{} Training acc: {}'.format(time.time() - st, (tr_data[1] != tr_pred).sum() / tr_data[0].shape[0]))
+    # te_pred = gnb.fit(tr_data[0], tr_data[1]).predict(te_data[0])
+    # print('{} Testing acc: {}'.format(time.time() - st, (te_data[1] != te_pred).sum() / te_data[0].shape[0]))
+
     # start training
     model = m.NBGaussian()
     model.build(tr_data[0], tr_data[1])
 
-    training_acc = model.test(tr_data[0], tr_data[1], util.acc)
-    # training_cms.append(training_test_res[1])
-    testing_acc = model.test(te_data[0], te_data[1], util.acc)
-    # testing_cms.append(testing_test_res[1])
+    tr_pred = model.predict(tr_data[0])
+    te_pred = model.predict(te_data[0])
+
+    tr_acc = (tr_data[1] != tr_pred).sum() / tr_data[0].shape[0]
+    te_acc = (te_data[1] != te_pred).sum() / te_data[0].shape[0]
 
 
-    print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, training_acc, testing_acc))
+    print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
 
     result = {}
-    result['TrainingAcc'] = training_acc
-    result['TestingAcc'] = testing_acc
+    result['TrainingAcc'] = tr_acc
+    result['TestingAcc'] = te_acc
 
     # log the training result to file
     util.write_result_to_file(result_path, model_name, result, True)

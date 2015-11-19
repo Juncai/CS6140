@@ -84,6 +84,8 @@ class Boosting():
         self.d = self.d / zt
 
     def update_d_cs(self, thresh_cs, model, a):
+        # r = thresh_cs[model.f_ind][model.t_ind] * a
+        # self.d = self.d * r
         for i in range(len(self.d)):
             self.d[i] *= math.exp(a) if thresh_cs[model.f_ind][model.t_ind][i] else math.exp(-a)
 

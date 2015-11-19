@@ -9,7 +9,7 @@ from sklearn.decomposition import PCA
 def main():
     st = time.time()
     # training parameter
-    result_path = 'results/PB2_A_spam_polluted.acc'
+    result_path = 'results/PB2_B_spam_polluted.acc'
     model_name = 'spam_'
     train_data_path = 'data/spam_polluted/train/data.pickle'
     test_data_path = 'data/spam_polluted/test/data.pickle'

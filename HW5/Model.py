@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import numbers
+from scipy.stats import norm
 
 
 class Model():
@@ -13,10 +14,7 @@ class Model():
         :param features: a list of features as a list of lists
         :return: predictions made from the import features as a list of floats
         '''
-        res = []
-        for f in features:
-            res.append(self.predict_single(f))
-        return res
+        return np.array([self.predict_single(f) for f in features])
 
     def train(self, features, label, d, threshes, thresh_cs):
         pass
@@ -158,12 +156,9 @@ class NB(Model):
 
     def _get_prior(self, labels):
         count = len(labels)
-        y_pos_cnt = 0.
         y_pos_cnt = labels.sum()
-        # for y in labels:
-        #     if y == 1.0:
-        #         y_pos_cnt += 1
         return [y_pos_cnt / count, 1 - (y_pos_cnt / count)]
+
 
     def _get_laplace_est(self, cnt1, cnt2):
         '''
@@ -239,25 +234,24 @@ class NBGaussian(NB):
             self.params[1].append([spam_e, overall_std if overall_std != 0 else 0.01])
 
     def predict_single(self, feature):
-        # init the possibilities
-        p = [self.py[0], self.py[1]]
+        # init the possibilities (log)
+        p = [math.log(self.py[0]), math.log(self.py[1])]
         for y in (0, 1):
             for ind, x in enumerate(feature):
                 tmp = self._get_log_p_x_y(ind, x, y)
                 p[y] += tmp
 
         log_odds = p[1] - p[0]
-        return log_odds
+        return 1 if log_odds >= 0 else 0
 
     def _get_log_p_x_y(self, x_ind, x_val, y):
         e, std = self.params[int(y)][x_ind]
-        return self.log_gauss_pdf(x_val, e, std)
+        return norm.logpdf(x_val, loc=e, scale=std)
 
     def log_gauss_pdf(self, x, e, std):
         # TODO calculate log gauss pdf
-        res = -0.5 * math.log(2. * math.pi * std ** 2) - (x - e) ** 2 / 2. / std ** 2 * math.log(math.e)
-        # res = math.pow(2 * math.pi * (std ** 2), -0.5) * math.pow(math.e, (-(x - e) ** 2) / (2 * std ** 2))
-        return res
+        return norm.logpdf(x, loc=e, scale=std)
+        # res = -0.5 * math.log(2. * math.pi * std ** 2) - (x - e) ** 2 / 2. / std ** 2 * math.log(math.e)
 
 
 class NBHistogram(NB):

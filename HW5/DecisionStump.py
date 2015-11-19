@@ -200,12 +200,9 @@ class DecisionStump(Model.Model):
                         max = err_d
                         best_res = (i, j, (threshes[i][0], threshes[i][1][j]), w_err)
         else:
-            # threshes_cs = util.pre_compute_threshes_3(features, label, threshes, d)
             for i, _ in enumerate(features[0]):
                 for j, t_cs in enumerate(thresh_cs[i]):
                     w_err = np.dot(t_cs, d)
-                    # n_err = np.dot(t_cs, n_ones) / n
-                    # w_err, n_err = threshes_cs[i][j]
                     err_d = abs(0.5 - w_err)
                     if err_d > max:
                         max = err_d

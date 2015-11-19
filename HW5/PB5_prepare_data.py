@@ -157,21 +157,21 @@ if __name__ == '__main__':
     percent = 0.2
 
     # randomly pick 20 percent of the training data
-    # random_select_data(tr_save_path, sel_tr_save_path, percent)
-    # convert_to_np_array(sel_tr_save_path)
+    random_select_data(tr_save_path, sel_tr_save_path, percent)
+    convert_to_np_array(sel_tr_save_path)
 
     # pre compute the cheatsheet
-    # get_cs(sel_tr_save_path, sel_tr_cs_save_path)
-    # get_cs(te_save_path, te_cs_save_path)
+    get_cs(sel_tr_save_path, sel_tr_cs_save_path)
+    get_cs(te_save_path, te_cs_save_path)
 
     # randomly pick 100 rectangles
-    # random_select_rectangle(28, 28, 100, 140, 170, rects_path)
-    # abstract_features(sel_tr_save_path, sel_tr_cs_save_path, rects_path, tr_f_l_path)
-    # abstract_features(te_save_path, te_cs_save_path, rects_path, te_f_l_path)
+    random_select_rectangle(28, 28, 100, 140, 170, rects_path)
+    abstract_features(sel_tr_save_path, sel_tr_cs_save_path, rects_path, tr_f_l_path)
+    abstract_features(te_save_path, te_cs_save_path, rects_path, te_f_l_path)
 
     # generate thresholds
-    # data = loader.load_pickle_file(tr_f_l_path)
-    # gt.generate_thresholds(data[0], thresh_path)
+    data = loader.load_pickle_file(tr_f_l_path)
+    gt.generate_thresholds(data[0], thresh_path)
 
     tmp = loader.load_pickle_file(tr_f_l_path)
     print('done')
