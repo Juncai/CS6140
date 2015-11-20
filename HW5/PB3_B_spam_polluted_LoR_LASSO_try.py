@@ -1,9 +1,9 @@
 import DataLoader as loader
 import Utilities as util
 import Preprocess as prep
-import GDModel as gd
 import time
 from sklearn.linear_model import LogisticRegression
+from sklearn import grid_search
 
 st = time.time()
 # training parameter
@@ -13,8 +13,6 @@ train_data_path = 'data/spam_polluted/train/data.pickle'
 test_data_path = 'data/spam_polluted/test/data.pickle'
 
 # params
-lamda = 0.0001
-tol = 0.85
 normalize_method = prep.zero_mean_unit_var
 term_method = util.acc_higher_than
 
@@ -31,11 +29,20 @@ prep.normalize_features_all(normalize_method, tr_data[0], te_data[0])
 print('{:.2f} Features normalized!'.format(time.time() - st))
 
 
-# using sklearn
+# using sklearn with grid search
+parameters = {'C' : [0.05], 'penalty' : ('l1',), 'tol' : (0.07,)}
 model = LogisticRegression(C=0.05, penalty='l1', tol=0.08)
-model.fit(tr_data[0], tr_data[1])
-tr_pred = model.predict(tr_data[0])
-te_pred = model.predict(te_data[0])
+clf = grid_search.GridSearchCV(model, parameters)
+clf.fit(tr_data[0], tr_data[1])
+
+# model.fit(tr_data[0], tr_data[1])
+# tr_pred = model.predict(tr_data[0])
+# te_pred = model.predict(te_data[0])
+tr_pred = clf.predict(tr_data[0])
+te_pred = clf.predict(te_data[0])
+
+print('Params: {}'.format(clf.get_params()))
+
 training_acc = util.acc(tr_pred, tr_data[1])
 testing_acc = util.acc(te_pred, te_data[1])
 

@@ -1,9 +1,9 @@
 import DataLoader as loader
 import Utilities as util
 import Preprocess as prep
-import GDModel as gd
 import time
 from sklearn.linear_model import LogisticRegression
+from sklearn import grid_search
 
 st = time.time()
 # training parameter
@@ -32,10 +32,19 @@ print('{:.2f} Features normalized!'.format(time.time() - st))
 
 
 # using sklearn
-model = LogisticRegression(C=0.05, penalty='l2', tol=0.01)
-model.fit(tr_data[0], tr_data[1])
-tr_pred = model.predict(tr_data[0])
-te_pred = model.predict(te_data[0])
+parameters = {'C' : [0.05, 0.04, 0.1, 0.2, 0.3], 'penalty' : ('l2',), 'tol' : (0.06,)}
+model = LogisticRegression(C=0.05, penalty='l1', tol=0.08)
+clf = grid_search.GridSearchCV(model, parameters)
+clf.fit(tr_data[0], tr_data[1])
+
+# model.fit(tr_data[0], tr_data[1])
+# tr_pred = model.predict(tr_data[0])
+# te_pred = model.predict(te_data[0])
+tr_pred = clf.predict(tr_data[0])
+te_pred = clf.predict(te_data[0])
+
+print('Params: {}'.format(clf.get_params()))
+
 training_acc = util.acc(tr_pred, tr_data[1])
 testing_acc = util.acc(te_pred, te_data[1])
 

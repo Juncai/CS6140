@@ -74,6 +74,7 @@ class LogisticRegressionGD(rm.RegressionModel):
         y = np.array([[l] for l in labels])
 
         f_n = len(x[0])
+        n = len(features)
 
         # initialize the theta and iteration counter
         # theta = np.zeros((len(x[0]), 1))
@@ -99,10 +100,17 @@ class LogisticRegressionGD(rm.RegressionModel):
                 hx = np.array(self.logistic_fun_batch(theta, x))
                 diffs = y - hx
                 for j in range(len(theta)):
-                    sum = 0
-                    for i in range(len(diffs)):
-                        sum += diffs[i][0] * x[i][j]
-                    theta[j][0] = theta[j][0] + lamda * sum
+                    if self.penalty == 'l2' and j != 0:
+                        sum = 0
+                        for i in range(len(diffs)):
+                            sum += diffs[i][0] * x[i][j]
+                        theta[j][0] = theta[j][0] + lamda * sum / n - lamda * self.alpha * theta[j][0]
+                    else:
+                        sum = 0
+                        for i in range(len(diffs)):
+                            sum += diffs[i][0] * x[i][j]
+                        theta[j][0] = theta[j][0] + lamda * sum / n
+
             else:
                 for i in range(len(x)):
                     hx = self.logistic_fun(theta, x[i])
@@ -112,7 +120,7 @@ class LogisticRegressionGD(rm.RegressionModel):
                             if j == 0:
                                 theta[j][0] = theta[j][0] + lamda * diff * x[i][j]
                             else:
-                                theta[j][0] = theta[j][0] + lamda * diff * x[i][j] + lamda * self.alpha * theta[j][0]
+                                theta[j][0] = theta[j][0] + lamda * diff * x[i][j] - lamda * self.alpha * theta[j][0]
                         else:
                             theta[j][0] = theta[j][0] + lamda * diff * x[i][j]
 

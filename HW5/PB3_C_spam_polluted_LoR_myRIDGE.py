@@ -12,8 +12,8 @@ train_data_path = 'data/spam_polluted/train/data.pickle'
 test_data_path = 'data/spam_polluted/test/data.pickle'
 
 # params
-lamda = 0.0001
-tol = 0.83
+lamda = 1
+tol = 0.951
 normalize_method = prep.zero_mean_unit_var
 term_method = util.acc_higher_than_ridge
 
@@ -31,7 +31,7 @@ print('{:.2f} Features normalized!'.format(time.time() - st))
 
 is_batch = True
 penalty = 'l2'  # l2 for RIDGE
-alpha = 0.1
+alpha = 0.05
 model = gd.LogisticRegressionGD(penalty, alpha)
 model.build(tr_data[0], tr_data[1], lamda, term_method, tol, is_batch)
 training_acc = model.test(tr_data[0], tr_data[1], util.acc)
