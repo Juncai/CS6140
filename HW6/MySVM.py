@@ -1,41 +1,54 @@
 import numpy as np
-import Kernels
+import random
+from sklearn.metrics.pairwise import rbf_kernel
+import time
 
 
-class svm():
+class SVM():
 
-    def __init__(self, kernel='poly', **kwargs):
-        self.kernel = Kernels.Kernels(kernel)
+    def __init__(self, **kwargs):
         self.tol = 0.001 if 'tol' not in kwargs else kwargs['tol']
         self.c = 1. if 'C' not in kwargs else kwargs['C']
-        self.support_vectors_ = None
-        self.a = None
-        self.features = None
-        self.label = None
-        self.w = None
-        self.b = None
-        self.e = None
+        self.support_vectors_ = []
+        self.a = []
+        self.features = []
+        self.label = []
+        self.w = []
+        self.b = []
+        self.e = []
+        self.acc = 0
+        self.converged = False
+        self.kernel = []
 
     def fit(self, features, label):
         self.features = features
         self.label = label
 
-        # TODO initialize a, w, b and precompute E?
-
         n, d = np.shape(features)
-        num_changed = 0
-        examine_all = True
-        while num_changed > 0 or examine_all:
-            if examine_all:
-                for i in range(n):
-                    num_changed += self.examine_example(i)
-            else:
-                for i in self.non_bounded_indexes():
-                    num_changed += self.examine_example(i)
-            if examine_all:
-                examine_all = False
-            elif num_changed == 0:
-                examine_all = True
+
+        # TODO initialize a, w, b, kernel and precompute E?
+        self.a = np.random.rand(n) * self.c   # randomly initialize the lagrangian multipliers
+        self.w = np.dot(self.a * self.label, self.features)
+        self.b = random.random()
+        self.kernel = rbf_kernel(features)
+        self.e = np.dot(self.features, self.w) + self.b - self.label
+        self.converged = False
+
+        # start training
+        while not self.converged:
+            num_changed = 0
+            examine_all = True
+            while num_changed > 0 or examine_all:
+                if examine_all:
+                    for i in range(n):
+                        num_changed += self.examine_example(i)
+                else:
+                    for i in self.non_bounded_indexes():
+                        num_changed += self.examine_example(i)
+                if examine_all:
+                    examine_all = False
+                elif num_changed == 0:
+                    examine_all = True
 
     def examine_example(self, i):
         y_i = self.label[i]
@@ -44,7 +57,7 @@ class svm():
         r_i = e_i * y_i
         if (r_i < - self.tol and a_i < self.c) or (r_i > self.tol and a_i > 0):
             if len(self.non_bounded_indexes()) > 1:
-                j = np.argmax(e_i - self.e)
+                j = np.argmax(np.abs(e_i - self.e))
                 if self.take_step(i, j):
                     return 1
 
@@ -78,9 +91,9 @@ class svm():
             h = min(self.c, a_i + a_j)
         if l == h:
             return False
-        k_i_i = self.kernel.get_value(i, i)     # TODO need to implement
-        k_j_j = self.kernel.get_value(j, j)     # TODO need to implement
-        k_i_j = self.kernel.get_value(i, j)     # TODO need to implement
+        k_i_i = self.kernel[i][i]
+        k_j_j = self.kernel[j][j]
+        k_i_j = self.kernel[i][j]
         n = k_i_i + k_j_j - 2 * k_i_j
         if n <= 0:
             return False
@@ -96,7 +109,8 @@ class svm():
         else:
             a_j_new_clipped = h
 
-        if abs(a_j - a_j_new_clipped) < e * (a_j + a_j_new_clipped + e):    # TODO what's e?
+        e = 0.001    # TODO tuning e
+        if abs(a_j - a_j_new_clipped) < e * (a_j + a_j_new_clipped + e):
             return False
 
         a_i_new = a_i + s * (a_j - a_j_new_clipped)
@@ -104,7 +118,7 @@ class svm():
         self.a[j] = a_j_new
 
 
-        # update b
+        # update b TODO confirm the e_i and e_j is old value or not
         b_i_new = b - e_i + (a_i - a_i_new) * y_i * k_i_i + (a_j - a_j_new) * y_j * k_i_j
         b_j_new = b - e_j + (a_i - a_i_new) * y_i * k_i_j + (a_j - a_j_new) * y_j * k_j_j
         if 0 < a_i_new and a_i_new < self.c:
@@ -120,17 +134,34 @@ class svm():
 
         # TODO update w and E w.r.t the new a and b
         # w = sum(a_i * y_i * x_i)
-        # e = w * x - y
+        w_i_delta = (a_i_new - a_i) * self.label[i] * self.features[i]
+        w_j_delta = (a_j_new - a_j) * self.label[j] * self.features[j]
+        self.w += w_i_delta + w_j_delta
+        # e = w * x + b - y
+        f_x = np.dot(self.features, self.w) + self.b
+        self.e = f_x - self.label
+
+        # TODO check the converged condition
+        acc = (np.sign(f_x * self.label) + 1).mean() / 2
+        print('{} Training acc: {}'.format(time.time(), acc))
+        if acc >= (1 - self.tol):
+            self.converged = True
 
         return True
 
     def predict(self, features):
-        pass
+        pred = np.dot(features, self.w) + self.b
+        return np.sign(pred)
 
 
     def random_f_indexes(self):
-        return []
+        f_ind = np.array([i for i in range(len(self.features))])
+        np.random.shuffle(f_ind)
+        return f_ind
 
     def non_bounded_indexes(self, random=False):
         # TODO return a random shuffle of the origin index list
-        return []
+        # non_bounded = 0 < a_i < C
+        nb_ind = np.array([i for i, aa in enumerate(self.a) if aa > 0 and aa < self.c])
+        np.random.shuffle(nb_ind)
+        return nb_ind

@@ -1,10 +1,11 @@
-
+from sklearn.metrics.pairwise import rbf_kernel
 
 
 class Kernels():
 
     def __init__(self, kern_name):
-        pass
+        if kern_name == 'rbf':
+            self.kernel_fun = rbf_kernel
 
     def get_value(self, i, j):
-        return 0
+        return self.kernel_fun(i, j)

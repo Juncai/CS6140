@@ -40,13 +40,6 @@ def main():
     tr_acc = (tr_data[1] == tr_pred).sum() / tr_data[0].shape[0]
     te_acc = (te_data[1] == te_pred).sum() / te_data[0].shape[0]
 
-
-    # training_acc = model.test(tr_data[0], tr_data[1], util.acc)
-    # training_cms.append(training_test_res[1])
-    # testing_acc = model.test(te_data[0], te_data[1], util.acc)
-    # testing_cms.append(testing_test_res[1])
-
-
     print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
 
     result = {}

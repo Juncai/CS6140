@@ -4,7 +4,6 @@ import numpy.random as random
 from scipy.spatial.distance import hamming
 import copy
 import pickle
-import Boosting as b
 import random as prandom
 
 
@@ -24,32 +23,6 @@ def choice(n, k):
     return res
 
 
-def get_f_ranking_from_predictions(boost, threshes):
-    '''
-
-    :param boost: boosting
-    :param threshes:
-    :return:
-    '''
-    assert isinstance(boost, b.Boosting)
-    a_list = boost.a
-    a_abs_sum = math.fsum(np.absolute(a_list))
-    n_f = len(threshes)
-    r_f_list = np.zeros((1, n_f))[0]
-    f_ind_list = [i for i in range(n_f)]
-    f_ind_in_boost = [m.f_ind for m in boost.model]
-
-    unique_f_ind = np.unique(f_ind_list)
-    for ii, f_ind in enumerate(f_ind_in_boost):
-        r_f_list[f_ind] += abs(a_list[ii])
-    r_f_list /= a_abs_sum
-
-    f_with_r = zip(f_ind_list, r_f_list)
-    res = sorted(f_with_r, key=lambda x: x[1], reverse=True)
-    return [r[0] for r in res]
-
-    pass
-
 def generate_bin_label_from_ecoc(label, ecoc):
     bin_label = copy.deepcopy(label)
     pos_ind = []
@@ -62,41 +35,6 @@ def generate_bin_label_from_ecoc(label, ecoc):
         bin_label[j] = 1 if l in pos_ind else -1
 
     return np.array(bin_label)
-
-def ecoc_test(features, label, boosts, ecoc):
-    pred = ecoc_prediction(features, boosts, ecoc)
-    return acc_exact(pred, label)
-
-def ecoc_prediction(features, boosts, ecoc):
-    pred = []
-    for f in features:
-        c_pred = ecoc_prediction_single(f, boosts, ecoc)
-        # print(c_pred)
-        pred.append(c_pred)
-    return pred
-
-
-def ecoc_prediction_single(feature, boosts, ecoc):
-    '''
-
-    :param feature:
-    :param boosts:
-    :param ecoc: ecoc for predicting
-    :return:
-    '''
-    min_hamming_dist = 1.
-    match_label = 0
-    code = []
-    for b in boosts:
-        c_pred = b.predict_single(feature)
-
-        code.append(1 if c_pred == 1 else 0)  # replace -1 with 0
-    for ind, c in enumerate(ecoc):
-        cur_hd = hamming(c, code)
-        if cur_hd < min_hamming_dist:
-            min_hamming_dist = cur_hd
-            match_label = ind
-    return match_label
 
 
 def get_bagging_data(ds, n):

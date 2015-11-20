@@ -232,45 +232,20 @@ class NBGaussian(NB):
         self.params[0].append(np.std(non_spam_dp, axis=0))
         self.params[1].append(np.mean(spam_dp, axis=0))
         self.params[1].append(np.std(spam_dp, axis=0))
-        # for i in range(f_len):
-        #
-        #     spam_f = spam_dp[:, i]
-        #     non_spam_f = non_spam_dp[:, i]
-        #
-        #
-        #     spam_e = np.mean(spam_f)
-        #     overall_std = np.std(features[:, i])
-        #     # spam_std = np.std(spam_dp)
-        #     non_spam_e = np.mean(non_spam_f)
-        #     # non_spam_std = np.std(non_spam_dp)
-        #     if overall_std == 0:
-        #         print('shit! feature {}'.format(i))
-        #     self.params[0].append([non_spam_e, overall_std if overall_std != 0 else 0.001])
-        #     self.params[1].append([spam_e, overall_std if overall_std != 0 else 0.001])
-
-    # def std(self, ):
-
-    # def predict(self, features):
-    #     pass
 
     def predict_single(self, feature):
         # init the possibilities (log)
         p0 = self.log_py[0]
         p1 = self.log_py[1]
-        # [math.log(self.py[0]), math.log(self.py[1])]
+
         for ind, x in enumerate(feature):
             p0 += self._get_log_p_x_y(ind, x, 0)
             p1 += self._get_log_p_x_y(ind, x, 1)
-
-        # for ind, x in enumerate(feature):
-        #     p0 *= self._get_p_x_y(ind, x, 0)
-        #     p1 *= self._get_p_x_y(ind, x, 1)
 
         log_odds = p1 - p0
         return 1 if log_odds >= 0 else 0
 
     def _get_log_p_x_y(self, x_ind, x_val, y):
-        # e, std = self.params[int(y)][x_ind]
         e = self.params[int(y)][0][x_ind]
         std = self.params[int(y)][1][x_ind]
         return norm.logpdf(x_val, loc=e, scale=std)
