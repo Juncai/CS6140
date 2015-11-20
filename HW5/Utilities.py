@@ -473,16 +473,12 @@ def acc_higher_than(theta, features, label, thresh, acc_count):
     print('acc: {}, mse: {}'.format(cur_acc, cur_mse))
     return cur_acc >= thresh or acc_count[1] >= 100
 
-def acc_higher_than_ridge(theta, features, label, thresh, acc_count):
+def acc_higher_than_ridge(theta, x, label, thresh, acc_count):
     '''
     Return True if the accuracy is higher than or equal to the threshold, False otherwise
     '''
-    x = [[1] + f for f in features]
-    x = np.array(x)
     # y = np.dot(x, theta)
     y = logistic_fun_batch(theta, x)
-    y = [yy[0] for yy in y]
-    label = [l[0] for l in label]
     cur_acc = acc(y, label)
     cur_mse = mse(y, label)
     if acc_count[0] == cur_acc:
@@ -504,11 +500,11 @@ def logistic_fun_batch(theta, features):
     y = []
     for x in features:
         tmp = logistic_fun(theta, x)
-        y.append([tmp])
+        y.append(tmp)
     return y
 
 def logistic_fun(theta, x):
     # x = x.tolist()
     # x = [1] + x
-    wx = np.dot(x, theta)[0]
+    wx = np.dot(x, theta)
     return 1.0 / (1 + np.exp(-wx))
