@@ -7,5 +7,7 @@ class Kernels():
         if kern_name == 'rbf':
             self.kernel_fun = rbf_kernel
 
-    def get_value(self, i, j):
+    def get_value(self, i, j=None):
+        if j is None:
+            j = i
         return self.kernel_fun(i, j)

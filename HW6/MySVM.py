@@ -1,6 +1,7 @@
 import numpy as np
 import random
-from sklearn.metrics.pairwise import rbf_kernel
+# from sklearn.metrics.pairwise import rbf_kernel
+import Kernels
 import time
 
 
@@ -27,28 +28,31 @@ class SVM():
         n, d = np.shape(features)
 
         # TODO initialize a, w, b, kernel and precompute E?
-        self.a = np.random.rand(n) * self.c   # randomly initialize the lagrangian multipliers
+        # self.a = np.random.rand(n) * self.c   # randomly initialize the lagrangian multipliers
+        init_a = 0.1    # TODO find a proper initial value for lm
+        self.a = (np.ones((1, n)) * init_a)[0]  # initialize the lm
         self.w = np.dot(self.a * self.label, self.features)
         self.b = random.random()
-        self.kernel = rbf_kernel(features)
+        k = Kernels.Kernels('rbf')
+        self.kernel = k.get_value(features)
         self.e = np.dot(self.features, self.w) + self.b - self.label
-        self.converged = False
+        # self.converged = False
 
         # start training
-        while not self.converged:
-            num_changed = 0
-            examine_all = True
-            while num_changed > 0 or examine_all:
-                if examine_all:
-                    for i in range(n):
-                        num_changed += self.examine_example(i)
-                else:
-                    for i in self.non_bounded_indexes():
-                        num_changed += self.examine_example(i)
-                if examine_all:
-                    examine_all = False
-                elif num_changed == 0:
-                    examine_all = True
+        # while not self.converged:
+        num_changed = 0
+        examine_all = True
+        while num_changed > 0 or examine_all:
+            if examine_all:
+                for i in range(n):
+                    num_changed += self.examine_example(i)
+            else:
+                for i in self.non_bounded_indexes():
+                    num_changed += self.examine_example(i)
+            if examine_all:
+                examine_all = False
+            elif num_changed == 0:
+                examine_all = True
 
     def examine_example(self, i):
         y_i = self.label[i]
@@ -109,7 +113,7 @@ class SVM():
         else:
             a_j_new_clipped = h
 
-        e = 0.001    # TODO tuning e
+        e = self.tol    # TODO e = tol?
         if abs(a_j - a_j_new_clipped) < e * (a_j + a_j_new_clipped + e):
             return False
 
@@ -133,10 +137,11 @@ class SVM():
 
 
         # TODO update w and E w.r.t the new a and b
+        # no need to update w
         # w = sum(a_i * y_i * x_i)
-        w_i_delta = (a_i_new - a_i) * self.label[i] * self.features[i]
-        w_j_delta = (a_j_new - a_j) * self.label[j] * self.features[j]
-        self.w += w_i_delta + w_j_delta
+        # w_i_delta = (a_i_new - a_i) * self.label[i] * self.features[i]
+        # w_j_delta = (a_j_new - a_j) * self.label[j] * self.features[j]
+        # self.w += w_i_delta + w_j_delta
         # e = w * x + b - y
         f_x = np.dot(self.features, self.w) + self.b
         self.e = f_x - self.label
@@ -144,8 +149,8 @@ class SVM():
         # TODO check the converged condition
         acc = (np.sign(f_x * self.label) + 1).mean() / 2
         print('{} Training acc: {}'.format(time.time(), acc))
-        if acc >= (1 - self.tol):
-            self.converged = True
+        # if acc >= (1 - self.tol):
+        #     self.converged = True
 
         return True
 
