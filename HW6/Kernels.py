@@ -8,7 +8,7 @@ class Kernels():
         if kern_name == 'rbf':
             self.kernel_fun = rbf_kernel
         elif kern_name == 'linear':
-            self.kernel_fun = self.kernel_fun
+            self.kernel_fun = self.linear_kernel
 
 
     def get_value(self, i, j=None):
