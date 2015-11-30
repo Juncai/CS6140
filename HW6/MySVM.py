@@ -14,7 +14,7 @@ class SVM():
         self.a = []
         self.features = []
         self.label = []
-        self.w = []
+        # self.w = []
         self.b = []
         self.e = []
         self.acc = 0
@@ -31,10 +31,16 @@ class SVM():
         # self.a = np.random.rand(n) * self.c   # randomly initialize the lagrangian multipliers
         init_a = 0.1    # TODO find a proper initial value for lm
         self.a = (np.ones((1, n)) * init_a)[0]  # initialize the lm
-        self.w = np.dot(self.a * self.label, self.features)
+
+        # don't need to compute w here
+        # self.w = np.dot(self.a * self.label, self.features)
+
         self.b = random.random()
-        k = Kernels.Kernels('rbf')
+        # k = Kernels.Kernels('rbf')
+        k = Kernels.Kernels('linear')
         self.kernel = k.get_value(features)
+
+        # TODO calculate predictions
         self.e = np.dot(self.features, self.w) + self.b - self.label
         # self.converged = False
 
