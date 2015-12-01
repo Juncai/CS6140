@@ -57,6 +57,9 @@ def main():
         print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
 
 
+
+
+
 if __name__ == '__main__':
     # profile.run('main()')
     main()

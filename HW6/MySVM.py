@@ -54,8 +54,7 @@ class SVM():
                 for i in range(n):
                     num_changed += self.examine_example(i)
             else:
-                nb_indices = self.non_bounded_indices()
-                for i in nb_indices:
+                for i in self.non_bounded_indices():
                     num_changed += self.examine_example(i)
             if examine_all:
                 examine_all = False
@@ -162,6 +161,10 @@ class SVM():
         # update E w.r.t the new a and b
         f_x = np.dot(self.ay, self.kernel) + self.b
         self.e = f_x - self.label
+
+        # self.e = self.e - b + self.b
+        # self.e[i] = np.dot(self.ay, self.kernel[:, i]) + self.b
+        # self.e[j] = np.dot(self.ay, self.kernel[:, j]) + self.b
 
         # acc = (np.sign(f_x * self.label) + 1).mean() / 2
         # pred = np.sign(f_x)
