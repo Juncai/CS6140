@@ -21,26 +21,17 @@ def main():
     te_data[1] = np.transpose(te_data[1])[0]
 
     # start training
-    training_errs = []
-    testing_errs = []
-    round_err_1st_boost = None
-    tr_errs_1st_boost = None
-    te_errs_1st_boost = None
-    te_auc_1st_boost = None
-    te_roc_1st_boost = None
-    ranked_f = None
-    roc = []
-    auc = 0.0
+    # kernel = 'poly'
+    kernel = 'linear'
+    tol = 0.01
 
     st = time.time()
-    tr_n, f_d = np.shape(tr_data[0])
-    te_n, = np.shape(te_data[1])
 
     # start training
-    print('{} Start training.'.format(time.time() - st))
+    print('{} Start training. Kernel: {}'.format(time.time() - st, kernel))
     # clf = svm.SVC(kernel='poly')
-    clf = svm.SVC(C=0.5, kernel='rbf')
-    # clf = svm.NuSVC(kernel='rbf')
+    clf = svm.SVC(C=0.01, kernel=kernel, tol=tol)
+    # clf = svm.NuSVC(kernel=kernel)
     clf.fit(tr_data[0], tr_data[1])
     tr_pred = clf.predict(tr_data[0])
     te_pred = clf.predict(te_data[0])
