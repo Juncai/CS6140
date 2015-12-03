@@ -21,7 +21,7 @@ class kNN():
         if k is None and window is None:
             raise Exception('Either k or range should be specified')
         if k is not None:  # kNN
-            dists = self.kernel.get_value(xx, self.x)
+            dists = self.kernel.get_value(self.x, xx)
             n_ind = self.find_n_nearest(k, dists)
             n = xx.shape[0]
             pred = np.zeros((n,))
@@ -49,9 +49,9 @@ class kNN():
 
     def find_n_nearest(self, n, dists):
         res = []
-        n = dists.shape[0]
-        for i in range(n):
-            dist = dists[i, :]
+        nn = dists.shape[1]
+        for i in range(nn):
+            dist = dists[:, i]
             res.append(self.find_n_nearest_helper(n, dist))
         return res
 
