@@ -49,6 +49,7 @@ class SVM():
         num_changed = 0
         examine_all = True
         while num_changed > 0 or examine_all:
+            st = time.time()
             num_changed = 0
             if examine_all:
                 for i in range(n):
@@ -64,7 +65,8 @@ class SVM():
             f_x = np.dot(self.ay, self.kernel) + self.b
             pred = np.sign(f_x)
             acc = (pred == self.label).sum() / len(self.label)
-            print('{} Training acc: {}, num_changed: {}'.format(time.time(), acc, num_changed))
+            # acc = 0
+            print('{:3f} Training acc: {}, num_changed: {}'.format(time.time() - st, acc, num_changed))
 
     def examine_example(self, i):
         y_i = self.label[i]
@@ -73,18 +75,25 @@ class SVM():
         r_i = e_i * y_i
         if (r_i < - self.tol and a_i < self.c) or (r_i > self.tol and a_i > 0):
             nb_indices = self.non_bounded_indices()
+            checked_indices = []
             if len(nb_indices) > 1:
                 j = np.argmax(np.abs(e_i - self.e))
                 if self.take_step(i, j):
                     return 1
+                checked_indices.append(j)
 
             np.random.shuffle(nb_indices)
             for j in nb_indices:  # TODO fix the randomly loop
+                # if j in checked_indices:
+                #     continue
                 if self.take_step(i, j):
                     return 1
+                checked_indices.append(j)
 
             rf_indices = self.random_f_indices()
             for j in rf_indices:
+                # if j in checked_indices:
+                #     continue
                 if self.take_step(i, j):
                     return 1
         return 0
@@ -159,13 +168,14 @@ class SVM():
         self.b = b_new
 
         # update E w.r.t the new a and b
-        f_x = np.dot(self.ay, self.kernel) + self.b
-        self.e = f_x - self.label
 
-        # self.e = self.e - b + self.b
-        # self.e[i] = np.dot(self.ay, self.kernel[:, i]) + self.b
-        # self.e[j] = np.dot(self.ay, self.kernel[:, j]) + self.b
+        # f_x = np.dot(self.ay, self.kernel) + self.b
+        # e1 = f_x - self.label
 
+        e2 = self.e - b + self.b
+        e2 = e2 - self.kernel[i, :] * a_i * y_i + self.kernel[i, :] * a_i_new * y_i
+        e2 = e2 - self.kernel[j, :] * a_j * y_j + self.kernel[j, :] * a_j_new * y_j
+        self.e = e2
         # acc = (np.sign(f_x * self.label) + 1).mean() / 2
         # pred = np.sign(f_x)
         # acc = (pred == self.label).sum() / len(self.label)
@@ -187,13 +197,20 @@ class SVM():
         # TODO return a random shuffle of the origin index list
         # non_bounded = 0 < a_i < C
         nb_ind = np.array([i for i, aa in enumerate(self.a) if aa > 0 and aa < self.c])
+
+        # cache the nb_ind
+
         if random:
             np.random.shuffle(nb_ind)
         return nb_ind
 
     def init_a(self):
         n = len(self.label)
-        res = np.zeros((1, n))[0]
+        # res = np.zeros((1, n))[0]
+        # TODO try this
+        res = np.random.rand(1, n)[0] * self.c
+
+
 
         # pos_indices = [i for i, y in enumerate(self.label) if y == 1]
         # neg_indices = [i for i, y in enumerate(self.label) if y == -1]
