@@ -33,8 +33,8 @@ def main():
 
         # start training
         print('{:3f} Start training. Kernel: {}'.format(time.time() - st, kernel))
-        # clf = svm.SVC(kernel=kernel)
-        clf = svm.NuSVC(kernel=kernel, tol=0.01, verbose=verbose)
+        clf = svm.SVC(kernel=kernel, C=0.01, tol=0.01, verbose=verbose)
+        # clf = svm.NuSVC(kernel=kernel, tol=0.01, verbose=verbose)
         clf.fit(tr_data[0], tr_data[1])
         tr_pred = clf.predict(tr_data[0])
         te_pred = clf.predict(te_data[0])

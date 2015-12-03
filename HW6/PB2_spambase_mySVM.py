@@ -9,9 +9,9 @@ import Utilities as util
 def main():
     # training parameter
     k = 10  # fold
-    round_limit = 300
     result_path = 'results/PB2_spam.acc'
     model_name = 'spam_' + str(k) + 'fold'
+    model_path = 'PB2_spam_mySVM.pickle'
     data_path = 'data/spam/data.pickle'
 
     # laod and preprocess training data
@@ -20,16 +20,6 @@ def main():
     util.replace_zero_label_with_neg_one(training_data)
 
     # start training
-    training_errs = []
-    testing_errs = []
-    round_err_1st_boost = None
-    tr_errs_1st_boost = None
-    te_errs_1st_boost = None
-    te_auc_1st_boost = None
-    te_roc_1st_boost = None
-    ranked_f = None
-    roc = []
-    auc = 0.0
     print('Preparing k fold data.')
     k_folds = Preprocess.prepare_k_folds(training_data, k)
 
@@ -57,7 +47,8 @@ def main():
         print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
 
 
-
+        # save the svm
+        loader.save(model_path, clf)
 
 
 if __name__ == '__main__':
