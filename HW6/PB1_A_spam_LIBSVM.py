@@ -3,6 +3,7 @@ import numpy as np
 import Preprocess
 from sklearn import svm
 import time
+import Utilities as util
 
 
 def main():
@@ -18,11 +19,12 @@ def main():
     # kernel = 'rbf'
     verbose = False
     tol = 0.01
+    c = 0.01
 
     # laod and preprocess training data
     training_data = loader.load_pickle_file(data_path)
     # TODO convert labels from {0, 1} to {-1, 1}
-    # util.replace_zero_label_with_neg_one(training_data)
+    util.replace_zero_label_with_neg_one(training_data)
 
 
     print('Preparing k fold data.')
@@ -35,8 +37,8 @@ def main():
         # start training
         print('{:3f} Start training. Kernel: {}'.format(time.time() - st, kernel))
 
-        # clf = svm.SVC(kernel=kernel)
-        clf = svm.NuSVC(kernel=kernel, tol=tol, verbose=verbose)
+        clf = svm.SVC(C=c, kernel=kernel, tol=tol, verbose=verbose)
+        # clf = svm.NuSVC(kernel=kernel, tol=tol, verbose=verbose)
         clf.fit(tr_data[0], tr_data[1])
         tr_pred = clf.predict(tr_data[0])
         te_pred = clf.predict(te_data[0])

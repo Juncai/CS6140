@@ -5,23 +5,25 @@ import numpy as np
 import MySVM as svm
 import time
 
+result_path = 'results/digits_ECOC_' + '_1.acc'
+model_name = 'digits_svm_a0_10r'
+model_path = 'results/' + model_name + '.model'
+te_pred_dict_path = 'results/digits_svm_test_pred_dict_10r'
+# tr_data_path = 'data\\digits\\tr_f_l.pickle'
+tr_data_path = 'data\\digits\\tr_f_l_10r.pickle'
+# te_data_path = 'data\\digits\\te_f_l.pickle'
+te_data_path = 'data\\digits\\te_f_l_10r.pickle'
+# threshes_path = 'data\\digits\\sel_tr.threshes'
+
+
 def main():
     # training parameter
     c = 0.01
-    tol = 0.01
+    tol = 0.05
     epsilon = 0.001
     # kernel = 'rbf'
     kernel = 'linear'
 
-    result_path = 'results/digits_ECOC_' + '_1.acc'
-    model_name = 'digits_svm_a0'
-    model_path = 'results/' + model_name + '.model'
-    te_pred_dict_path = 'results/digits_svm_test_pred_dict'
-    # tr_data_path = 'data\\digits\\tr_f_l.pickle'
-    tr_data_path = 'data\\digits\\tr_f_l_10.pickle'
-    # te_data_path = 'data\\digits\\te_f_l.pickle'
-    te_data_path = 'data\\digits\\te_f_l_10.pickle'
-    # threshes_path = 'data\\digits\\sel_tr.threshes'
 
 
     # laod and preprocess training data
@@ -82,12 +84,12 @@ def main():
     loader.save(te_pred_dict_path, test_pred_dict)
 
 def test():
-    model_name = 'digits_svm_1'
-    model_path = 'results/' + model_name + '.model'
-    te_pred_dict_path = 'results/digits_svm_test_pred_dict'
-    tr_data_path = 'data\\digits\\tr_f_l.pickle'
-    te_data_path = 'data\\digits\\te_f_l.pickle'
-    # threshes_path = 'data\\digits\\sel_tr.threshes'
+    # model_name = 'digits_svm_1'
+    # model_path = 'results/' + model_name + '.model'
+    # te_pred_dict_path = 'results/digits_svm_test_pred_dict'
+    # tr_data_path = 'data\\digits\\tr_f_l.pickle'
+    # te_data_path = 'data\\digits\\te_f_l.pickle'
+    # # threshes_path = 'data\\digits\\sel_tr.threshes'
 
 
     # laod and preprocess training data
@@ -215,5 +217,5 @@ def data_i_j(tr_f, tr_l, i, j):
 # util.write_result_to_file(result_path, model_name, result, True)
 
 if __name__ == '__main__':
-    # main()
+    main()
     test()

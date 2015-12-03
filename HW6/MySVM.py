@@ -80,20 +80,20 @@ class SVM():
                 j = np.argmax(np.abs(e_i - self.e))
                 if self.take_step(i, j):
                     return 1
-                # checked_indices.append(j)
+                checked_indices.append(j)
 
             np.random.shuffle(nb_indices)
             for j in nb_indices:  # TODO fix the randomly loop
-                # if j in checked_indices:
-                #     continue
+                if j in checked_indices:
+                    continue
                 if self.take_step(i, j):
                     return 1
                 checked_indices.append(j)
 
             rf_indices = self.random_f_indices()
             for j in rf_indices:
-                # if j in checked_indices:
-                #     continue
+                if j in checked_indices:
+                    continue
                 if self.take_step(i, j):
                     return 1
         return 0
