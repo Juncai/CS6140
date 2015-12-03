@@ -91,8 +91,19 @@ def test():
     # laod and preprocess training data
     # tr_data = loader.load_pickle_file(tr_data_path)
     te_data= loader.load_pickle_file(te_data_path)
-    # model = loader.load_pickle_file(model_path)
-    te_pred_dict = loader.load_pickle_file(te_pred_dict_path)
+    model = loader.load_pickle_file(model_path)
+    # te_pred_dict = loader.load_pickle_file(te_pred_dict_path)
+
+    test_pred_dict = {}
+    for i in range(9):
+        test_pred_dict[i] = {}
+        for j in range(i + 1, 10):
+            if i == j:
+                continue
+            # get training data for this class
+            clf = model[i][j]
+            te_pred = clf.predict(te_data[0])
+            test_pred_dict[i][j] = te_pred
 
 
     te_n = len(te_data[1])
@@ -102,9 +113,9 @@ def test():
         votes = np.zeros((10,), dtype=np.int)
         for j in range(9):
             for k in range(j):
-                votes[j] += 1 if te_pred_dict[k][j][i] == -1 else 0
-            for kk in te_pred_dict[j]:
-                votes[j] += 1 if te_pred_dict[j][kk][i] == 1 else 0
+                votes[j] += 1 if test_pred_dict[k][j][i] == -1 else 0
+            for kk in test_pred_dict[j]:
+                votes[j] += 1 if test_pred_dict[j][kk][i] == 1 else 0
         count = np.bincount(votes)
         if count[-1] == 1:
             te_pred[i] = votes.argmax()
@@ -119,7 +130,7 @@ def test():
                         break
                     else:
                         cc += 1
-            te_pred[i] = tie_ind[0] if te_pred_dict[tie_ind[0]][tie_ind[1]][i] == 1 else tie_ind[1]
+            te_pred[i] = tie_ind[0] if test_pred_dict[tie_ind[0]][tie_ind[1]][i] == 1 else tie_ind[1]
             print('{} Tie! {} wins.'.format(count[-1], te_pred[i]))
 
 
