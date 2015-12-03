@@ -11,13 +11,16 @@ def main():
     k = 10  # fold
     result_path = 'results/PB2_spam.acc'
     model_name = 'spam_' + str(k) + 'fold'
-    model_path = 'PB2_spam_mySVM.pickle'
+    model_path = 'results/PB2_spam_mySVM_0a_norm.pickle'
     data_path = 'data/spam/data.pickle'
 
     # laod and preprocess training data
     training_data = loader.load_pickle_file(data_path)
     # TODO convert labels from {0, 1} to {-1, 1}
     util.replace_zero_label_with_neg_one(training_data)
+
+    # normalize feature
+    Preprocess.normalize_features_all(Preprocess.zero_mean_unit_var, training_data[0])
 
     # start training
     print('Preparing k fold data.')

@@ -147,14 +147,14 @@ def convert_to_np_array(path):
 if __name__ == '__main__':
     tr_save_path = 'data\\digits\\tr_data.pickle'
     te_save_path = 'data\\digits\\te_data.pickle'
-    te_cs_save_path = 'data\\digits\\te_cs.pickle'
-    sel_tr_save_path = 'data\\digits\\sel_tr_data.pickle'
-    sel_tr_cs_save_path = 'data\\digits\\sel_tr_cs.pickle'
+    te_cs_save_path = 'data\\digits\\te_cs_10.pickle'
+    sel_tr_save_path = 'data\\digits\\sel_tr_data_10.pickle'
+    sel_tr_cs_save_path = 'data\\digits\\sel_tr_cs_10.pickle'
     rects_path = 'data\\digits\\100_rects.pickle'
-    tr_f_l_path = 'data\\digits\\tr_f_l.pickle'
-    te_f_l_path = 'data\\digits\\te_f_l.pickle'
+    tr_f_l_path = 'data\\digits\\tr_f_l_10.pickle'
+    te_f_l_path = 'data\\digits\\te_f_l_10.pickle'
     thresh_path = 'data\\digits\\sel_tr.threshes'
-    percent = 0.2
+    percent = 0.1
 
     # randomly pick 20 percent of the training data
     random_select_data(tr_save_path, sel_tr_save_path, percent)
@@ -165,13 +165,13 @@ if __name__ == '__main__':
     get_cs(te_save_path, te_cs_save_path)
 
     # randomly pick 100 rectangles
-    random_select_rectangle(28, 28, 100, 140, 170, rects_path)
+    # random_select_rectangle(28, 28, 100, 140, 170, rects_path)
     abstract_features(sel_tr_save_path, sel_tr_cs_save_path, rects_path, tr_f_l_path)
     abstract_features(te_save_path, te_cs_save_path, rects_path, te_f_l_path)
 
     # generate thresholds
-    data = loader.load_pickle_file(tr_f_l_path)
-    gt.generate_thresholds(data[0], thresh_path)
+    # data = loader.load_pickle_file(tr_f_l_path)
+    # gt.generate_thresholds(data[0], thresh_path)
 
-    tmp = loader.load_pickle_file(tr_f_l_path)
+    # tmp = loader.load_pickle_file(tr_f_l_path)
     print('done')

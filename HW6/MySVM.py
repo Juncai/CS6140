@@ -80,7 +80,7 @@ class SVM():
                 j = np.argmax(np.abs(e_i - self.e))
                 if self.take_step(i, j):
                     return 1
-                checked_indices.append(j)
+                # checked_indices.append(j)
 
             np.random.shuffle(nb_indices)
             for j in nb_indices:  # TODO fix the randomly loop
@@ -206,9 +206,9 @@ class SVM():
 
     def init_a(self):
         n = len(self.label)
-        # res = np.zeros((1, n))[0]
+        res = np.zeros((1, n))[0]
         # TODO try this
-        res = np.random.rand(1, n)[0] * self.c
+        # res = np.random.rand(1, n)[0] * self.c
 
 
 

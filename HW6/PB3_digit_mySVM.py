@@ -14,11 +14,13 @@ def main():
     kernel = 'linear'
 
     result_path = 'results/digits_ECOC_' + '_1.acc'
-    model_name = 'digits_svm_2'
+    model_name = 'digits_svm_a0'
     model_path = 'results/' + model_name + '.model'
     te_pred_dict_path = 'results/digits_svm_test_pred_dict'
-    tr_data_path = 'data\\digits\\tr_f_l.pickle'
-    te_data_path = 'data\\digits\\te_f_l.pickle'
+    # tr_data_path = 'data\\digits\\tr_f_l.pickle'
+    tr_data_path = 'data\\digits\\tr_f_l_10.pickle'
+    # te_data_path = 'data\\digits\\te_f_l.pickle'
+    te_data_path = 'data\\digits\\te_f_l_10.pickle'
     # threshes_path = 'data\\digits\\sel_tr.threshes'
 
 
