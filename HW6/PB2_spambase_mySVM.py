@@ -9,9 +9,9 @@ import Utilities as util
 def main():
     # training parameter
     k = 10  # fold
-    round_limit = 300
     result_path = 'results/PB2_spam.acc'
     model_name = 'spam_' + str(k) + 'fold'
+    model_path = 'results/PB2_spam_mySVM_0a_norm_skip.pickle'
     data_path = 'data/spam/data.pickle'
 
     # laod and preprocess training data
@@ -19,21 +19,17 @@ def main():
     # TODO convert labels from {0, 1} to {-1, 1}
     util.replace_zero_label_with_neg_one(training_data)
 
+    # normalize feature
+    Preprocess.normalize_features_all(Preprocess.zero_mean_unit_var, training_data[0])
+
     # start training
-    training_errs = []
-    testing_errs = []
-    round_err_1st_boost = None
-    tr_errs_1st_boost = None
-    te_errs_1st_boost = None
-    te_auc_1st_boost = None
-    te_roc_1st_boost = None
-    ranked_f = None
-    roc = []
-    auc = 0.0
     print('Preparing k fold data.')
     k_folds = Preprocess.prepare_k_folds(training_data, k)
+    tr_accs = []
+    te_accs = []
+    tt_st = time.time()
 
-    for i in range(1):
+    for i in range(k):
         st = time.time()
         tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
         tr_n, f_d = np.shape(tr_data[0])
@@ -54,10 +50,13 @@ def main():
         tr_acc = (tr_data[1] == tr_pred).sum() / tr_data[0].shape[0]
         te_acc = (te_data[1] == te_pred).sum() / te_data[0].shape[0]
 
-        print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
+        print('{} Results. Train acc: {}, Test acc: {}'.format(time.time() - st, tr_acc, te_acc))
+        tr_accs.append(tr_acc)
+        te_accs.append(te_acc)
 
-
-
+        # save the svm
+        # loader.save(model_path, clf)
+    print('{} Final results. Train acc: {}, Test acc: {}'.format(time.time() - tt_st, np.mean(tr_accs), np.mean(te_accs)))
 
 
 if __name__ == '__main__':
