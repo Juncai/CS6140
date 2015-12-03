@@ -84,16 +84,16 @@ class SVM():
 
             np.random.shuffle(nb_indices)
             for j in nb_indices:  # TODO fix the randomly loop
-                # if j in checked_indices:
-                #     continue
+                if j in checked_indices:
+                    continue
                 if self.take_step(i, j):
                     return 1
                 checked_indices.append(j)
 
             rf_indices = self.random_f_indices()
             for j in rf_indices:
-                # if j in checked_indices:
-                #     continue
+                if j in checked_indices:
+                    continue
                 if self.take_step(i, j):
                     return 1
         return 0
@@ -206,9 +206,9 @@ class SVM():
 
     def init_a(self):
         n = len(self.label)
-        # res = np.zeros((1, n))[0]
+        res = np.zeros((1, n))[0]
         # TODO try this
-        res = np.random.rand(1, n)[0] * self.c
+        # res = np.random.rand(1, n)[0] * self.c
 
 
 

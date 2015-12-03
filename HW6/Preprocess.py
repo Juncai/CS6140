@@ -19,9 +19,10 @@ def shift_and_scale(ds, col):
     normalize all features in the given dataset with shift and scale
     method
     '''
-    tmp_ar = [x[col] for x in ds]
-    min_val = np.amin(tmp_ar)
-    max_val = np.amax(tmp_ar)
+    # tmp_ar = np.array([x[col] for x in ds])
+    tmp_ar = ds[:, col]
+    min_val = tmp_ar.min()
+    max_val = tmp_ar.max()
     range_val = max_val - min_val
     for i in range(len(tmp_ar)):
         ds[i][col] = (tmp_ar[i] - min_val) / range_val
@@ -32,9 +33,10 @@ def zero_mean_unit_var(ds, col):
     normalize all features in the given dataset with zero mean
     and unit variance method
     '''
-    tmp_ar = [x[col] for x in ds]
-    mean_val = np.mean(tmp_ar)
-    std_val = np.std(tmp_ar)
+    # tmp_ar = np.array([x[col] for x in ds])
+    tmp_ar = ds[:, col]
+    mean_val = tmp_ar.mean()
+    std_val = tmp_ar.std()
     for i in range(len(tmp_ar)):
         ds[i][col] = (tmp_ar[i] - mean_val) / std_val
 
