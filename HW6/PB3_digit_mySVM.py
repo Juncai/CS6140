@@ -50,14 +50,15 @@ def main():
     # test the svms
     test_pred_dict = {}
 
+    st = time.time()
     # prepare 45 datasets
+    fn_count = 0
     for i in range(9):
         svm_dict[i] = {}
         test_pred_dict[i] = {}
         for j in range(i + 1, 10):
             if i == j:
                 continue
-            st = time.time()
             # get training data for this class
             c_tr_f, c_tr_y = data_i_j(tr_data[0], tr_data[1], i, j)
             # train svm
@@ -68,15 +69,72 @@ def main():
 
             tr_acc = (c_tr_y == tr_pred).sum() / c_tr_f.shape[0]
 
-            print('{} Final results. Train acc: {}'.format(time.time() - st, tr_acc))
+            fn_count += 1
+            print('{} Function {} done. Final results. Train acc: {}'.format(time.time() - st, fn_count, tr_acc))
 
             svm_dict[i][j] = clf
 
             te_pred = clf.predict(te_data[0])
             test_pred_dict[i][j] = te_pred
 
+    print('{} Training finished.'.format(time.time() - st))
     loader.save(model_path, svm_dict)
     loader.save(te_pred_dict_path, test_pred_dict)
+
+def test():
+    model_name = 'digits_svm_1'
+    model_path = 'results/' + model_name + '.model'
+    te_pred_dict_path = 'results/digits_svm_test_pred_dict'
+    tr_data_path = 'data\\digits\\tr_f_l.pickle'
+    te_data_path = 'data\\digits\\te_f_l.pickle'
+    # threshes_path = 'data\\digits\\sel_tr.threshes'
+
+
+    # laod and preprocess training data
+    # tr_data = loader.load_pickle_file(tr_data_path)
+    te_data= loader.load_pickle_file(te_data_path)
+    # model = loader.load_pickle_file(model_path)
+    te_pred_dict = loader.load_pickle_file(te_pred_dict_path)
+
+
+    te_n = len(te_data[1])
+    te_pred = np.zeros((1, te_n))[0]
+
+    for i in range(te_n):
+        votes = np.zeros((10,), dtype=np.int)
+        for j in range(9):
+            for k in range(j):
+                votes[j] += 1 if te_pred_dict[k][j][i] == -1 else 0
+            for kk in te_pred_dict[j]:
+                votes[j] += 1 if te_pred_dict[j][kk][i] == 1 else 0
+        count = np.bincount(votes)
+        if count[-1] == 1:
+            te_pred[i] = votes.argmax()
+        else:
+            te_pred[i] = votes.argmax()
+            tie_ind = [votes.argmax()]
+            cc = 0
+            for ind_v, v in enumerate(votes):
+                if v == votes.max():
+                    if cc == 1:
+                        tie_ind.append(ind_v)
+                        break
+                    else:
+                        cc += 1
+            te_pred[i] = tie_ind[0] if te_pred_dict[tie_ind[0]][tie_ind[1]][i] == 1 else tie_ind[1]
+            print('{} Tie! {} wins.'.format(count[-1], te_pred[i]))
+
+
+    acc = 0
+    acc_n = 0
+    for ind_l, l in enumerate(te_data[1]):
+        acc += 1 if l == te_pred[ind_l] else 0
+
+    acc /= te_n
+    # acc = (te_data[1] == te_pred).sum() / te_n
+
+    print('Acc: {}'.format(acc))
+
 
 
 def data_i_j(tr_f, tr_l, i, j):
@@ -157,4 +215,5 @@ def data_i_j(tr_f, tr_l, i, j):
 # util.write_result_to_file(result_path, model_name, result, True)
 
 if __name__ == '__main__':
-    main()
+    # main()
+    test()
