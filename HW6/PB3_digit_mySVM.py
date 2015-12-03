@@ -2,12 +2,6 @@ __author__ = 'Jon'
 
 import DataLoader as loader
 import numpy as np
-import Utilities as util
-import pickle
-import math
-from scipy.spatial.distance import hamming
-import os.path as path
-import copy
 import MySVM as svm
 import time
 
@@ -20,7 +14,7 @@ def main():
     kernel = 'linear'
 
     result_path = 'results/digits_ECOC_' + '_1.acc'
-    model_name = 'digits_svm_1'
+    model_name = 'digits_svm_2'
     model_path = 'results/' + model_name + '.model'
     te_pred_dict_path = 'results/digits_svm_test_pred_dict'
     tr_data_path = 'data\\digits\\tr_f_l.pickle'
