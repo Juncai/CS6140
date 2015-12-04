@@ -32,7 +32,8 @@ def zero_mean_unit_var(ds, col):
     normalize all features in the given dataset with zero mean
     and unit variance method
     '''
-    tmp_ar = [x[col] for x in ds]
+    # tmp_ar = [x[col] for x in ds]
+    tmp_ar = ds[:, col]
     mean_val = np.mean(tmp_ar)
     std_val = np.std(tmp_ar)
     for i in range(len(tmp_ar)):
