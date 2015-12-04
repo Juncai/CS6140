@@ -6,9 +6,9 @@ import MySVM as svm
 import time
 
 result_path = 'results/digits_ECOC_' + '_1.acc'
-model_name = 'digits_svm_a0_10r'
+model_name = 'digits_svm_a0_10r_c01'
 model_path = 'results/' + model_name + '.model'
-te_pred_dict_path = 'results/digits_svm_test_pred_dict_10r'
+te_pred_dict_path = 'results/digits_svm_test_pred_dict_10r_c01'
 # tr_data_path = 'data\\digits\\tr_f_l.pickle'
 tr_data_path = 'data\\digits\\tr_f_l_10r.pickle'
 # te_data_path = 'data\\digits\\te_f_l.pickle'
@@ -18,8 +18,8 @@ te_data_path = 'data\\digits\\te_f_l_10r.pickle'
 
 def main():
     # training parameter
-    c = 0.01
-    tol = 0.05
+    c = 0.1
+    tol = 0.01
     epsilon = 0.001
     # kernel = 'rbf'
     kernel = 'linear'
