@@ -22,7 +22,7 @@ class Kernels():
 
     def get_value(self, x, y=None):
         if y is None:
-            x = y
+            y = x
 
         n_row = x.shape[0]
         n_col = len(y)

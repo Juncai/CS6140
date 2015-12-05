@@ -1,11 +1,13 @@
 import numpy as np
 import math
 import numpy.random as random
-from scipy.spatial.distance import hamming
 import copy
 import pickle
 import random as prandom
-
+from scipy.spatial.distance import hamming
+import os.path as path
+import math
+import DataLoader as loader
 
 def choice(n, k):
     '''
@@ -450,3 +452,44 @@ def logistic_fun(theta, x):
     # x = [1] + x
     wx = np.dot(x, theta)[0]
     return 1.0 / (1 + np.exp(-wx))
+
+
+def get_ecoc(ecoc_path, num_ecoc, class_num):
+    if path.isfile(ecoc_path):
+        print('Loading the ecoc...')
+        best_ecoc = loader.load_pickle_file(ecoc_path)
+    else:
+        print('Creating the ecoc...')
+        best_ecoc = [0, [], []]     # distance, ecoc for training, ecoc for predicting
+        for i in range(100):
+            n = int(math.pow(2, num_ecoc))
+            codes = choice(n, class_num)
+            ecoc_func_codes = []
+            for i in range(num_ecoc):
+                ecoc_func_codes.append([])
+            c_ecoc = []
+            for c in codes:
+                bin_s = '{0:0' + str(num_ecoc) + '10b}'.format(c)
+                bin_s = [int(ss) for ss in bin_s]
+                c_ecoc.append(bin_s)
+                for i in range(num_ecoc):
+                    ecoc_func_codes[i].append(bin_s[i])
+            c_hamming_dist = 0
+            has_same_code = False
+            for j in range(len(c_ecoc)):
+                for k in range(len(c_ecoc)):
+                    if j != k:
+                        c_hd = hamming(c_ecoc[j], c_ecoc[k])
+                        if c_hd == 0:
+                            has_same_code = True
+                        c_hamming_dist += c_hd
+            if has_same_code:
+                continue
+            if c_hamming_dist > best_ecoc[0]:
+                best_ecoc[0] = c_hamming_dist
+                best_ecoc[1] = ecoc_func_codes
+                best_ecoc[2] = c_ecoc
+
+        # serialize the best ecoc
+        loader.save(ecoc_path, best_ecoc)
+    return best_ecoc

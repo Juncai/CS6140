@@ -44,7 +44,7 @@ def main():
         kernel = 'linear'
         clf = svm.SVM(C=c, tol=tol, epsilon=epsilon, kernel=kernel)
         clf.fit(tr_data[0], tr_data[1])
-        tr_pred = clf.predict(tr_data[0])
+        tr_pred = clf.predict([tr_data[0][0]])
         te_pred = clf.predict(te_data[0])
 
         tr_acc = (tr_data[1] == tr_pred).sum() / tr_data[0].shape[0]

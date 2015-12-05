@@ -10,8 +10,8 @@ def main():
     result_path = 'results/PB1_B_digits.acc'
     model_name = 'digits_'
     threshes_path = 'data/spambase.threshes'
-    tr_data_path = 'data\\digits\\tr_f_l.pickle'
-    te_data_path = 'data\\digits\\te_f_l.pickle'
+    tr_data_path = 'data\\digits\\tr_f_l_10r.pickle'
+    te_data_path = 'data\\digits\\te_f_l_10r.pickle'
     # laod and preprocess training data
     tr_data = loader.load_pickle_file(tr_data_path)
     te_data = loader.load_pickle_file(te_data_path)
@@ -24,13 +24,14 @@ def main():
     # kernel = 'poly'
     kernel = 'linear'
     tol = 0.01
+    c = 0.01
 
     st = time.time()
 
     # start training
     print('{} Start training. Kernel: {}'.format(time.time() - st, kernel))
     # clf = svm.SVC(kernel='poly')
-    clf = svm.SVC(C=0.01, kernel=kernel, tol=tol)
+    clf = svm.SVC(C=c, kernel=kernel, tol=tol)
     # clf = svm.NuSVC(kernel=kernel)
     clf.fit(tr_data[0], tr_data[1])
     tr_pred = clf.predict(tr_data[0])

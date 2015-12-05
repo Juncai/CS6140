@@ -30,9 +30,10 @@ class Perceptron():
 
         # recursively update theta
         while True:
-            m = filter(self.filter_mistakes, x)
+            # m = filter(self.filter_mistakes, x)
+            m = [xx for xx in x if np.dot(xx, self.theta) <= 0]
             self.training_record[iter_count] = len(m)
-            print 'Iteration ' + str(iter_count) + ', total_mistake ' + str(len(m))
+            print('Iteration {}, total_mistake {}.'.format(iter_count, len(m)))
             if term_fun(m, thresh):  # terminating condition
                 break
             if is_batch:
@@ -62,9 +63,7 @@ class NN():
         # init weights
         w_in = [[random.random() for i in range(9)] for j in range(3)]
         w_out = [[random.random() for i in range(4)] for j in range(8)]
-        print 'Initial weights:'
-        print w_in
-        print w_out
+        print('Initial weights: {}, {}'.format(w_in, w_out))
         nn_output = [[], []]
         # train the network
         while True:
