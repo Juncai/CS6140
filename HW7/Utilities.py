@@ -7,6 +7,18 @@ import pickle
 import random as prandom
 
 
+def find_top_indices(n, dist, min=True):
+    assert isinstance(n, int)
+    n = n if n < len(dist) else len(dist)
+    if n < 1:
+        raise Exception('n should be an integer larger than 0')
+    inds = None
+    if n == 1:
+        inds = np.array([np.argmin(dist) if min else np.argmax(dist)])
+    else:
+        inds = dist.argsort()[:n] if min else dist.argsort()[-n:]
+    return inds
+
 def choice(n, k):
     '''
     Get k samples from the range(0, n) without replacement

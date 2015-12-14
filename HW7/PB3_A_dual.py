@@ -19,6 +19,7 @@ features = np.array(features)
 labels = np.array(labels).transpose()[0]
 # create perceptron
 kernel = c.LINEAR
+# kernel = c.GAUSSIAN
 model = PerceptronDual(kernel=kernel)
 model.fit(features, labels)
 

@@ -7,8 +7,8 @@ from sklearn.metrics.pairwise import rbf_kernel
 
 class KDE():
 
-    def __init__(self, kernel=c.EUCLIDIAN):
-        self.kernel = Kernels.Kernels(kern_name=kernel)
+    def __init__(self, kernel=c.EUCLIDEAN):
+        self.kernel = Kernels.Kernels(kern_name=kernel, is_sim=True)
         self.x = []
         self.y = []
         self.c_list = []
@@ -17,7 +17,7 @@ class KDE():
     def fit(self, x, y):
         self.x = x
         self.y = y
-        self._pre_compute_class()
+        self._pre_compute_class_bak()
 
     def predict(self, xx):
         pred = []
@@ -25,16 +25,29 @@ class KDE():
             r = np.zeros((len(self.c_list),))
 
             for ind, c_x_array in enumerate(self.c_x):
-                # r[ind] = self.kernel.get_value(c_x_array, [cur_xx]).sum()
-                tmp = rbf_kernel(c_x_array, [cur_xx])
-                r[ind] = tmp.sum()
+                r[ind] = np.sum(self.kernel.get_value(c_x_array, [cur_xx])) / c_x_array.shape[0]
+                # tmp = rbf_kernel(c_x_array, [cur_xx])
+                # r[ind] = tmp.sum()
 
 
             pred.append(self.c_list[np.argmax(r)])
             # pred.append(self.c_list[np.argmin(r)])
         return pred
 
-    def _pre_compute_class(self):
+    # def _pre_compute_class(self):
+    #     c_ind_list = []
+    #     for i in range(10):
+    #         self.c_list.append(i)
+    #         c_ind_list.append([])
+    #     for ind_yy, yy in enumerate(self.y):
+    #         c_ind_list[yy].append(ind_yy)
+    #     for ind_cil, ci in enumerate(c_ind_list):
+    #         cur_x = []
+    #         for ind_x in ci:
+    #             cur_x.append(self.x[ind_x])
+    #         self.c_x.append(np.array(cur_x))
+
+    def _pre_compute_class_bak(self):
         c_ind_dict = {}
         for ind_yy, yy in enumerate(self.y):
             if yy not in c_ind_dict.keys():

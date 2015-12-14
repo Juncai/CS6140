@@ -49,7 +49,7 @@ def main():
         te_acc = (te_data[1] == te_pred).sum() / te_data[0].shape[0]
 
         testing_accs.append(te_acc)
-        print('{} {}-fold results with kernel {}, r={}. Train acc: {}, Test acc: {}'.format(time.time() - st, i, kernel, r, tr_acc, te_acc))
+        print('{} {}-fold results with kernel {}, Train acc: {}, Test acc: {}'.format(time.time() - st, i, kernel, tr_acc, te_acc))
 
 
     # print('{} Final results with kernel {}. Test acc: {}'.format(time.time() - sst, kernel, np.array(testing_accs).mean()))
