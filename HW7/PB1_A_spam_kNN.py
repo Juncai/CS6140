@@ -31,7 +31,7 @@ def main():
 
     for is_sklearn in (False, True):
         print("is_sklearn: {}".format(is_sklearn))
-        for i in range(1):
+        for i in (0,):
             st = time.time()
             tr_data, te_data = Preprocess.get_i_fold(k_folds, i)
 

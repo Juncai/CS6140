@@ -19,7 +19,7 @@ def main():
     # TODO convert labels from {0, 1} to {-1, 1}
     # util.replace_zero_label_with_neg_one(training_data)
 
-    Preprocess.normalize_features_all(Preprocess.zero_mean_unit_var, training_data[0])
+    # Preprocess.normalize_features_all(Preprocess.zero_mean_unit_var, training_data[0])
     # training_data[0] = preprocessing.scale(training_data[0])
 
 

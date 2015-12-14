@@ -36,8 +36,8 @@ class kNN():
             min_dist_same = float('inf')
             min_dist_opp = float('inf')
             for d_ind, d in enumerate(dists[x_ind]):
-                if x_ind == d_ind:
-                    continue
+                # if x_ind == d_ind:
+                #     continue
                 if self.y[d_ind] == self.y[x_ind]:
                     if d < min_dist_same:
                         z_same = self.x[d_ind]
