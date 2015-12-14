@@ -7,20 +7,20 @@ from sklearn.metrics.pairwise import rbf_kernel, polynomial_kernel
 
 class Kernels():
 
-    def __init__(self, kern_name, is_sim=False):
+    def __init__(self, kernel_name, is_sim=False):
         self.is_sim = is_sim
-        if kern_name == c.RBF:
-            self.kernel_fun = rbf_kernel
-        elif kern_name == c.LINEAR:
+        if kernel_name == c.LINEAR:
             self.kernel_fun = self.linear
-        elif kern_name == c.EUCLIDEAN:
+        elif kernel_name == c.EUCLIDEAN:
             self.kernel_fun = self.euclidean
-        elif kern_name == c.COSINE:
+        elif kernel_name == c.COSINE:
             self.kernel_fun = self.cosine
-        elif kern_name == c.GAUSSIAN:
+        elif kernel_name == c.GAUSSIAN:
             self.kernel_fun = self.gaussian
-        elif kern_name == c.POLY:
+        elif kernel_name == c.POLY:
             self.kernel_fun = self.poly
+        elif kernel_name ==c.RBF:
+            self.kernel_fun = self.rbf
 
     def get_value(self, x, y=None):
         if y is None:
@@ -69,12 +69,9 @@ class Kernels():
 
         :return:
         """
-        n = len(y)
-        # c2 = - (1 / 2)
-        c2 = -1
+        c2 = - (1 / 2)
+        # c2 = -1
         res = np.exp(c2 * np.square(x - y).sum(axis=1))
-
-        # res = rbf_kernel(x, y)[:, 0]
         return res if self.is_sim else - res
 
 
@@ -96,3 +93,16 @@ class Kernels():
         res = np.dot(x, np.transpose(yy))
         # return res if self.is_sim else np.exp(-res)
         return res
+
+    def rbf(self, x, y):
+        """
+
+        :return:
+        """
+        n = len(y)
+        # c2 = - (1 / 2)
+        c2 = -1
+        # res = np.exp(c2 * np.square(x - y).sum(axis=1))
+
+        res = rbf_kernel(x, y)[:, 0]
+        return res if self.is_sim else - res

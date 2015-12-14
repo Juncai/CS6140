@@ -1,0 +1,6 @@
+EUCLIDEAN = 'Euclidean'
+COSINE = 'Cosine'
+GAUSSIAN = 'Gaussian'
+POLY = 'Polynomial'
+RBF = 'rbf'
+LINEAR = 'linear'

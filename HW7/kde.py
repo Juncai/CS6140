@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import rbf_kernel
 class KDE():
 
     def __init__(self, kernel=c.EUCLIDEAN):
-        self.kernel = Kernels.Kernels(kern_name=kernel, is_sim=True)
+        self.kernel = Kernels.Kernels(kernel_name=kernel, is_sim=True)
         self.x = []
         self.y = []
         self.c_list = []
